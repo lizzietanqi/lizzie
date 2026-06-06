@@ -1,10 +1,11 @@
 const interests = [
-  "Music — always on",
-  "Running — most mornings",
-  "Design obsessive",
-  "AI × human creativity",
+  "Music",
+  "Running",
+  "Design",
   "Building in public",
-  "Sarawak born, KL based",
+  "Writing",
+  "Badminton",
+  "Squash",
 ];
 
 const InterestsSection = () => {
