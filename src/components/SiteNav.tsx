@@ -12,9 +12,6 @@ const SiteNav = () => {
           <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
             Writing
           </Link>
-          <Link to="/reps" className="text-muted-foreground hover:text-foreground transition-colors">
-            Reps
-          </Link>
           <ThemeToggle />
         </div>
       </div>

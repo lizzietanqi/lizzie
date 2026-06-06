@@ -12,6 +12,9 @@ const AboutSection = () => {
         <p>
           Ran a 14-person content agency helping founders build their brands. Now building Cleve and directing Malaysia's National AI Competition.
         </p>
+        <p>
+          Recently built sites for Malaysian.ai and Rakan Tutor, joined Build for Public, and started hosting regular Malaysian.ai runs.
+        </p>
       </div>
     </section>
   );

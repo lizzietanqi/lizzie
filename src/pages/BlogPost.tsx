@@ -5,6 +5,16 @@ import SiteNav from "@/components/SiteNav";
 import Footer from "@/components/Footer";
 import { fetchNote } from "@/lib/cleve";
 
+const formatNoteDate = (timestamp: number | null | undefined) => {
+  if (!timestamp) return "Updated recently";
+
+  return new Date(timestamp).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 const BlogPost = () => {
   const { id } = useParams<{ id: string }>();
 
@@ -39,14 +49,10 @@ const BlogPost = () => {
               {note.title || "Untitled"}
             </h1>
             <p className="font-mono text-xs text-muted-foreground">
-              {new Date(note.created_at).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              {formatNoteDate(note.createdAt)}
             </p>
             <div className="prose prose-sm dark:prose-invert max-w-none pt-4">
-              <ReactMarkdown>{note.content}</ReactMarkdown>
+              <ReactMarkdown>{note.content ?? ""}</ReactMarkdown>
             </div>
           </article>
         )}

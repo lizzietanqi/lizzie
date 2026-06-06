@@ -2,6 +2,16 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/cleve";
 
+const formatNoteDate = (timestamp: number | null | undefined) => {
+  if (!timestamp) return "Updated recently";
+
+  return new Date(timestamp).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 const WritingSection = () => {
   const { data: notes, isLoading, isError } = useQuery({
     queryKey: ["cleve-notes"],
@@ -47,11 +57,7 @@ const WritingSection = () => {
                   {post.title || "Untitled"}
                 </p>
                 <p className="font-mono text-xs text-muted-foreground mt-1">
-                  {new Date(post.created_at).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {formatNoteDate(post.createdAt)}
                 </p>
               </div>
               <span className="text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all text-sm shrink-0 mt-0.5">

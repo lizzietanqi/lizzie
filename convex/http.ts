@@ -9,14 +9,127 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-http.route({
-  path: "/cleve-proxy",
-  method: "OPTIONS",
-  handler: httpAction(async () => new Response(null, { headers: corsHeaders })),
-});
+type CleveNote = {
+  _id?: unknown;
+  title?: unknown;
+  content?: unknown;
+  publishedAt?: unknown;
+  updatedAt?: unknown;
+  snapshot?: {
+    content?: unknown;
+  };
+};
+
+type SiteNote = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: number | null;
+  updatedAt: number | null;
+};
+
+const CLEVE_CONVEX_URL = "https://earnest-chicken-856.convex.cloud";
+const CLEVE_PUBLIC_PROFILE_SLUG = process.env.CLEVE_PUBLIC_PROFILE_SLUG ?? "ashvinpraveen";
+
+const jsonResponse = (body: unknown, init?: ResponseInit) => {
+  const headers = new Headers(init?.headers);
+  Object.entries(corsHeaders).forEach(([key, value]) => headers.set(key, value));
+  headers.set("Content-Type", "application/json");
+
+  return new Response(JSON.stringify(body), {
+    ...init,
+    headers,
+  });
+};
+
+const unwrapData = (payload: unknown): unknown => {
+  if (payload && typeof payload === "object" && "data" in payload) {
+    return (payload as { data: unknown }).data;
+  }
+  return payload;
+};
+
+const parseList = <T,>(payload: unknown): T[] => {
+  const data = unwrapData(payload);
+  return Array.isArray(data) ? (data as T[]) : [];
+};
+
+const parseTimestamp = (value: unknown): number | null => {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  return null;
+};
+
+const normalizeNote = (note: CleveNote): SiteNote | null => {
+  const id = typeof note._id === "string" ? note._id : null;
+  if (!id) return null;
+
+  return {
+    id,
+    title: typeof note.title === "string" ? note.title : "Untitled",
+    content: typeof note.content === "string" ? note.content : "",
+    createdAt: parseTimestamp(note.publishedAt),
+    updatedAt: parseTimestamp(note.updatedAt),
+  };
+};
+
+const cleveQuery = async <T,>(path: string, args: Record<string, unknown>): Promise<T> => {
+  const res = await fetch(`${CLEVE_CONVEX_URL}/api/query`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Convex-Client": "npm-1.34.0",
+    },
+    body: JSON.stringify({
+      path,
+      format: "convex_encoded_json",
+      args: [args],
+    }),
+  });
+
+  const payload = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(`Cleve published notes query failed: ${res.status}`);
+  }
+
+  if (!payload || typeof payload !== "object" || !("status" in payload)) {
+    throw new Error("Invalid Cleve published notes response.");
+  }
+
+  if ((payload as { status: unknown }).status !== "success") {
+    throw new Error("Cleve published notes query returned an error.");
+  }
+
+  return (payload as { value: T }).value;
+};
+
+const listPublicNotes = async () => {
+  const notesPayload = await cleveQuery<CleveNote[]>("notes/api/publishing:getPublishedNotes", {
+    slug: CLEVE_PUBLIC_PROFILE_SLUG,
+  });
+
+  const notes = parseList<CleveNote>(notesPayload)
+    .map(normalizeNote)
+    .filter((note): note is SiteNote => note !== null)
+    .sort((a, b) => (b.createdAt ?? b.updatedAt ?? 0) - (a.createdAt ?? a.updatedAt ?? 0));
+
+  return notes;
+};
+
+const getPublicNote = async (noteId: string) => {
+  const note = await cleveQuery<CleveNote | null>("notes/api/publishing:getPublishedNote", {
+    slug: CLEVE_PUBLIC_PROFILE_SLUG,
+    noteId,
+  });
+
+  return note ? normalizeNote(note) : null;
+};
 
 http.route({
-  path: "/reps-coach",
+  path: "/cleve-proxy",
   method: "OPTIONS",
   handler: httpAction(async () => new Response(null, { headers: corsHeaders })),
 });
@@ -25,106 +138,30 @@ http.route({
   path: "/cleve-proxy",
   method: "GET",
   handler: httpAction(async (_, req) => {
-    const CLEVE_API_KEY = process.env.CLEVE_API_KEY;
-    if (!CLEVE_API_KEY) {
-      return new Response(JSON.stringify({ error: "CLEVE_API_KEY not configured" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
     const url = new URL(req.url);
-    const path = url.searchParams.get("path") || "/notes";
-    const res = await fetch(`https://app.cleve.ai/api/v1${path}`, {
-      headers: { Authorization: `Bearer ${CLEVE_API_KEY}` },
-    });
-    const data = await res.json();
-    return new Response(JSON.stringify(data), {
-      status: res.status,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }),
-});
+    const resource = url.searchParams.get("resource") ?? "notes";
 
-http.route({
-  path: "/reps-coach",
-  method: "POST",
-  handler: httpAction(async (_, req) => {
-    const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-    if (!ANTHROPIC_API_KEY) {
-      return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY not configured" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    try {
+      if (resource === "notes") {
+        const notes = await listPublicNotes();
+        return jsonResponse({ data: notes.map(({ content, ...note }) => note) });
+      }
+
+      if (resource === "note") {
+        const noteId = url.searchParams.get("id");
+        if (!noteId) return jsonResponse({ error: "Missing note id" }, { status: 400 });
+        const note = await getPublicNote(noteId);
+        if (!note) return jsonResponse({ error: "Note not found" }, { status: 404 });
+        return jsonResponse({ data: note });
+      }
+
+      return jsonResponse({ error: "Unsupported Cleve proxy resource" }, { status: 400 });
+    } catch (error) {
+      return jsonResponse(
+        { error: error instanceof Error ? error.message : "Cleve proxy error" },
+        { status: 500 },
+      );
     }
-
-    const { drillType, result } = await req.json();
-
-    let systemPrompt = "";
-    let userPrompt = "";
-
-    if (drillType === "constraint") {
-      systemPrompt = `You are a writing coach with the mindset of a competitive distance running coach. You analyze writing drills - not to be nice, but to make the writer better. Be direct, specific, and constructive. Use short paragraphs. Reference specific words or phrases from their writing.`;
-      userPrompt = `The writer was given this paragraph and asked to rewrite it in exactly 15 words within 60 seconds.
-
-**Original:**
-${result.original}
-
-**Their rewrite (${result.wordCount} words, ${result.timeUsed}s):**
-${result.rewrite}
-
-Analyze:
-1. Did they hit the 15-word target? If over/under, what could they cut or add?
-2. Did they capture the core idea? What was lost or preserved?
-3. What does their word choice reveal about their thinking patterns?
-4. One specific drill to improve their compression skill.`;
-    } else if (drillType === "threshold") {
-      const wordsPerMinute = Math.round((result.wordCount as number) / (result.targetMinutes as number));
-      systemPrompt = `You are a writing coach with the mindset of a competitive distance running coach. You analyze threshold training sessions - volume, pace, and form under pressure. Be direct and specific. Use running analogies when they fit naturally.`;
-      userPrompt = `The writer set a target of ${result.targetWords} words in ${result.targetMinutes} minutes.
-
-**Results:**
-- Words written: ${result.wordCount}
-- Pace: ~${wordsPerMinute} words/minute
-- Backspace presses: ${result.backspaceCount}
-${(result.backspaceCount as number) > 20 ? "(That's a lot of editing mid-flow.)" : ""}
-
-**Their writing:**
-${(result.text as string).slice(0, 2000)}${(result.text as string).length > 2000 ? "..." : ""}
-
-Analyze:
-1. Pace assessment - did they sustain output or fade?
-2. The backspace count - what does it say about their editing impulse?
-3. Sentence structure patterns — do they default to long or short? Simple or complex?
-4. One specific observation about their voice or thinking style.
-5. What to focus on in the next session.`;
-    }
-
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 1024,
-        stream: true,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }],
-      }),
-    });
-
-    if (!response.ok) {
-      return new Response(JSON.stringify({ error: "AI error" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
-    });
   }),
 });
 

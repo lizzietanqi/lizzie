@@ -28,7 +28,17 @@ Then start Convex:
 npx convex dev
 ```
 
-Add your `CLEVE_API_KEY` to your Convex project's environment variables at [dashboard.convex.dev](https://dashboard.convex.dev) → Settings → Environment Variables.
+By default, the Writing section reads from Ashvin's public Cleve profile:
+
+```
+https://app.cleve.ai/user/ashvinpraveen
+```
+
+To use a different public profile, set this Convex environment variable:
+
+```
+CLEVE_PUBLIC_PROFILE_SLUG=your_cleve_username
+```
 
 ---
 
@@ -87,22 +97,21 @@ The [Cleve MCP](https://cleve.ai) was connected to Claude Code so that every edi
 
 If you're iterating on your own site in Claude Code, connect Cleve's MCP server so your notes are available as context mid-session.
 
-### 5. Add the Cleve API to sync public notes
+### 5. Add Cleve public writing sync
 
-The Writing section pulls notes directly from your Cleve account via the Cleve API. Any note you make public in Cleve automatically shows up on the site — no CMS, no manual publishing.
+The Writing section pulls notes directly from your public Cleve profile. Any note you publish in Cleve automatically shows up on the site — no CMS, no manual publishing.
 
 To use this:
-1. Get your API key from [app.cleve.ai](https://app.cleve.ai)
-2. Add it as `CLEVE_API_KEY` in your Convex environment variables
-3. Publish notes in Cleve — they'll appear at `/blog`
+1. Publish notes on your Cleve profile
+2. Keep `CLEVE_PUBLIC_PROFILE_SLUG=ashvinpraveen`, or change it to your own Cleve username in Convex
+3. Visit `/blog`
 
 ### 6. Migrate the backend to Convex
 
 The site started with Supabase (via Lovable) for the backend. To have full ownership, the backend was migrated to [Convex](https://convex.dev).
 
 Convex handles:
-- **`/cleve-proxy`** — a serverless HTTP action that proxies the Cleve API securely (your API key never touches the browser)
-- **`/reps-coach`** — AI coaching feedback for the writing drills on `/reps`
+- **`/cleve-proxy`** — a serverless HTTP action that reads Cleve's public publishing queries and normalizes them for the site
 
 The Convex functions live in `convex/http.ts`.
 
@@ -115,7 +124,7 @@ The Convex functions live in `convex/http.ts`.
 | Framework | React 18 + Vite |
 | Styling | Tailwind CSS + shadcn/ui |
 | Backend | Convex |
-| Writing sync | Cleve API |
+| Writing sync | Cleve public profile |
 | Analytics | Vercel Analytics |
 | Deployment | Vercel |
 
@@ -129,13 +138,13 @@ Add your environment variables in Vercel project settings:
 - `VITE_CONVEX_URL`
 - `VITE_CONVEX_SITE_URL`
 
-Make sure `CLEVE_API_KEY` is set in Convex (not Vercel — it lives server-side).
+If you are not using Ashvin's profile, set `CLEVE_PUBLIC_PROFILE_SLUG` in Convex.
 
 ---
 
 ## The writing section
 
-The `/blog` route fetches your public Cleve notes and renders them as a reading list. Individual notes are at `/blog/:id`.
+The `/blog` route fetches public Cleve notes from `https://app.cleve.ai/user/ashvinpraveen` and renders them as a reading list. Individual notes are at `/blog/:id`.
 
 To populate it: write in Cleve, mark notes as public, and they appear automatically. No deploy needed.
 

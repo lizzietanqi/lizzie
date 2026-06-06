@@ -3,15 +3,25 @@ const projects = [
     name: "National AI Competition (NAIC)",
     logo: "/logo-naic.png",
     href: "https://rakantutor.org/naic",
+    sourceHref: "https://github.com/ashvinpraveen/rakantutor",
     role: "Director",
-    description: "Leading Malaysia's largest student AI challenge, run by Rakan Tutor and co-organized with Sunway University. Students compete in 5 tracks: building AI apps, training models, generative art, smart city engineering, and future classroom design. Grand Finals at Sunway University, June 2026.",
+    description: "Leading Malaysia's largest student AI challenge, run by Rakan Tutor and co-organized with Sunway University. Students compete in 5 tracks: building AI apps, training models, generative art, smart city engineering, and future classroom design.",
   },
   {
     name: "Malaysian.ai",
     logo: "/logo-malaysian-ai.png",
     href: "https://www.malaysian.ai/",
-    role: "Contributor",
-    description: "The home of AI builders in Malaysia, backed by 500 Global. Connects builders across communities, events, and a residency program supporting Malaysian AI startups.",
+    sourceHref: "https://github.com/ashvinpraveen/malaysianai",
+    role: "Builder / host",
+    description: "The home of AI builders in Malaysia, backed by 500 Global. I built the site and host regular community runs on Mondays and Thursdays.",
+  },
+  {
+    name: "Build for Public",
+    logo: null,
+    href: "https://buildforpublic.com",
+    sourceHref: "https://github.com/mfrashad/buildforpublic",
+    role: "Joining",
+    description: "Joining a community of people building practical public-interest projects in the open.",
   },
 ];
 
@@ -30,11 +40,17 @@ const InvolvementSection = () => {
           >
             <div className="flex items-start justify-between gap-4 mb-2">
               <div className="flex items-center gap-3">
-                <img
-                  src={project.logo}
-                  alt={project.name}
-                  className="w-9 h-9 rounded-lg object-contain shrink-0"
-                />
+                {project.logo ? (
+                  <img
+                    src={project.logo}
+                    alt={project.name}
+                    className="w-9 h-9 rounded-lg object-contain shrink-0"
+                  />
+                ) : (
+                  <span className="flex w-9 h-9 items-center justify-center rounded-lg border border-border bg-background font-mono text-xs font-semibold text-primary shrink-0">
+                    BP
+                  </span>
+                )}
                 <h3 className="text-base font-semibold">
                   <a
                     href={project.href}
@@ -53,6 +69,16 @@ const InvolvementSection = () => {
             <p className="text-sm leading-relaxed text-foreground/80 pl-12">
               {project.description}
             </p>
+            <div className="mt-3 pl-12">
+              <a
+                href={project.sourceHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors"
+              >
+                Source →
+              </a>
+            </div>
           </div>
         ))}
       </div>
