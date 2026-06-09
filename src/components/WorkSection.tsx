@@ -21,40 +21,6 @@ const work: WorkItem[] = [
       "40,000+ users. Backed by Antler.",
     ],
   },
-  {
-    name: "Malaysian.ai",
-    href: "https://www.malaysian.ai/",
-    sourceHref: "https://github.com/ashvinpraveen/malaysianai",
-    logo: "/logo-malaysian-ai.png",
-    alt: "Malaysian.ai",
-    cta: "Visit Malaysian.ai",
-    description: [
-      "Built the website for Malaysia's AI builder community, backed by 500 Global.",
-      "I also host regular community runs on Mondays and Thursdays.",
-    ],
-  },
-  {
-    name: "RakanTutor.org",
-    href: "https://rakantutor.org",
-    sourceHref: "https://github.com/ashvinpraveen/rakantutor",
-    initials: "RT",
-    cta: "Visit Rakan Tutor",
-    description: [
-      "Built the website for Rakan Tutor, a student-led education nonprofit.",
-      "Currently directing the National AI Competition with Rakan Tutor and Sunway University.",
-    ],
-  },
-  {
-    name: "Build for Public",
-    href: "https://buildforpublic.com",
-    sourceHref: "https://github.com/mfrashad/buildforpublic",
-    initials: "BP",
-    cta: "Visit Build for Public",
-    description: [
-      "Joining a community of builders working on useful public-interest projects.",
-      "The kind of place that turns good intent into shipped tools, not just nice intentions.",
-    ],
-  },
 ];
 
 const WorkSection = () => {
