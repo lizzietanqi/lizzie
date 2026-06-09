@@ -28,6 +28,14 @@ type SiteNote = {
   updatedAt: number | null;
 };
 
+type RichTextNode = {
+  type?: unknown;
+  attrs?: unknown;
+  content?: unknown;
+  text?: unknown;
+  marks?: unknown;
+};
+
 const CLEVE_CONVEX_URL = "https://earnest-chicken-856.convex.cloud";
 const CLEVE_PUBLIC_PROFILE_SLUG = process.env.CLEVE_PUBLIC_PROFILE_SLUG ?? "ashvinpraveen";
 
@@ -63,14 +71,126 @@ const parseTimestamp = (value: unknown): number | null => {
   return null;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+const getChildren = (node: RichTextNode): RichTextNode[] =>
+  Array.isArray(node.content) ? (node.content as RichTextNode[]) : [];
+
+const getAttrNumber = (attrs: unknown, key: string): number | null => {
+  if (!isRecord(attrs)) return null;
+  const value = attrs[key];
+  return typeof value === "number" ? value : null;
+};
+
+const getAttrString = (attrs: unknown, key: string): string | null => {
+  if (!isRecord(attrs)) return null;
+  const value = attrs[key];
+  return typeof value === "string" ? value : null;
+};
+
+const renderInlineNode = (node: RichTextNode): string => {
+  if (node.type === "text") {
+    let text = typeof node.text === "string" ? node.text : "";
+    if (Array.isArray(node.marks)) {
+      for (const mark of node.marks) {
+        if (!isRecord(mark)) continue;
+        if (mark.type === "bold" || mark.type === "strong") text = `**${text}**`;
+        if (mark.type === "italic" || mark.type === "em") text = `_${text}_`;
+        if (mark.type === "code") text = `\`${text}\``;
+        if (mark.type === "strike") text = `~~${text}~~`;
+        if (mark.type === "link") {
+          const href = getAttrString(mark.attrs, "href");
+          if (href) text = `[${text}](${href})`;
+        }
+      }
+    }
+    return text;
+  }
+
+  if (node.type === "hardBreak") return "\n";
+
+  return getChildren(node).map(renderInlineNode).join("");
+};
+
+const renderBlockNode = (node: RichTextNode, index = 0, listKind: "bullet" | "ordered" | null = null): string => {
+  const children = getChildren(node);
+
+  switch (node.type) {
+    case "doc":
+      return children.map((child) => renderBlockNode(child)).filter(Boolean).join("\n\n");
+    case "paragraph":
+      return children.map(renderInlineNode).join("").trim();
+    case "heading": {
+      const level = Math.min(Math.max(getAttrNumber(node.attrs, "level") ?? 2, 1), 6);
+      const text = children.map(renderInlineNode).join("").trim();
+      return text ? `${"#".repeat(level)} ${text}` : "";
+    }
+    case "bulletList":
+      return children.map((child, childIndex) => renderBlockNode(child, childIndex, "bullet")).filter(Boolean).join("\n");
+    case "orderedList":
+      return children.map((child, childIndex) => renderBlockNode(child, childIndex, "ordered")).filter(Boolean).join("\n");
+    case "listItem": {
+      const body = children.map((child) => renderBlockNode(child)).filter(Boolean).join("\n  ");
+      const prefix = listKind === "ordered" ? `${index + 1}. ` : "- ";
+      return body ? `${prefix}${body}` : "";
+    }
+    case "blockquote": {
+      const body = children.map((child) => renderBlockNode(child)).filter(Boolean).join("\n\n");
+      return body.split("\n").map((line) => `> ${line}`).join("\n");
+    }
+    case "codeBlock": {
+      const code = children.map(renderInlineNode).join("");
+      return `\`\`\`\n${code}\n\`\`\``;
+    }
+    default:
+      return children.length > 0 ? children.map((child) => renderBlockNode(child)).filter(Boolean).join("\n\n") : "";
+  }
+};
+
+const parseSnapshotContent = (content: unknown): string | null => {
+  if (typeof content !== "string") return null;
+
+  try {
+    const parsed: unknown = JSON.parse(content);
+    if (!isRecord(parsed)) return null;
+    const markdown = renderBlockNode(parsed).trim();
+    return markdown.length > 0 ? markdown : null;
+  } catch {
+    return null;
+  }
+};
+
+const normalizePlainTextContent = (content: unknown): string => {
+  if (typeof content !== "string") return "";
+  return content
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join("\n\n");
+};
+
+const stripDuplicateTitle = (content: string, title: string) => {
+  const escapedTitle = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return content
+    .replace(new RegExp(`^#\\s+${escapedTitle}\\s*\\n+`, "i"), "")
+    .replace(new RegExp(`^${escapedTitle}\\s*\\n+`, "i"), "")
+    .trim();
+};
+
 const normalizeNote = (note: CleveNote): SiteNote | null => {
   const id = typeof note._id === "string" ? note._id : null;
   if (!id) return null;
+  const title = typeof note.title === "string" ? note.title : "Untitled";
+  const content = stripDuplicateTitle(
+    parseSnapshotContent(note.snapshot?.content) ?? normalizePlainTextContent(note.content),
+    title,
+  );
 
   return {
     id,
-    title: typeof note.title === "string" ? note.title : "Untitled",
-    content: typeof note.content === "string" ? note.content : "",
+    title,
+    content,
     createdAt: parseTimestamp(note.publishedAt),
     updatedAt: parseTimestamp(note.updatedAt),
   };

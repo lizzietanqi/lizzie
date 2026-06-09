@@ -8,6 +8,15 @@ const projects = [
     description: "Leading Malaysia's largest student AI challenge, run by Rakan Tutor and co-organized with Sunway University. Students compete in 5 tracks: building AI apps, training models, generative art, smart city engineering, and future classroom design.",
   },
   {
+    name: "RakanTutor.org",
+    logo: null,
+    initials: "RT",
+    href: "https://rakantutor.org",
+    sourceHref: "https://github.com/ashvinpraveen/rakantutor",
+    role: "Builder",
+    description: "Built the website for Rakan Tutor, a student-led education nonprofit in Malaysia.",
+  },
+  {
     name: "Malaysian.ai",
     logo: "/logo-malaysian-ai.png",
     href: "https://www.malaysian.ai/",
@@ -18,6 +27,7 @@ const projects = [
   {
     name: "Build for Public",
     logo: null,
+    initials: "BP",
     href: "https://buildforpublic.com",
     sourceHref: "https://github.com/mfrashad/buildforpublic",
     role: "Joining",
@@ -48,7 +58,7 @@ const InvolvementSection = () => {
                   />
                 ) : (
                   <span className="flex w-9 h-9 items-center justify-center rounded-lg border border-border bg-background font-mono text-xs font-semibold text-primary shrink-0">
-                    BP
+                    {project.initials || "P"}
                   </span>
                 )}
                 <h3 className="text-base font-semibold">

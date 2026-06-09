@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import SiteNav from "@/components/SiteNav";
 import Footer from "@/components/Footer";
+import ActivityMap from "@/components/ActivityMap";
 import { fetchNotes } from "@/lib/cleve";
 
 const formatNoteDate = (timestamp: number | null | undefined) => {
@@ -55,6 +56,10 @@ const Blog = () => {
               Try again →
             </button>
           </div>
+        )}
+
+        {!isLoading && !isError && notes && notes.length > 0 && (
+          <ActivityMap notes={notes} />
         )}
 
         {notes && notes.length === 0 && (
