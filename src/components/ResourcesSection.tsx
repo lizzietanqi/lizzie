@@ -1,3 +1,5 @@
+import SectionBlock from "@/components/SectionBlock";
+
 const resources = [
   {
     label: "Cleve.ai",
@@ -23,19 +25,15 @@ const resources = [
 
 const ResourcesSection = () => {
   return (
-    <section id="resources" className="py-16 md:py-20 border-t border-border">
-      <div className="flex items-center gap-3 mb-8">
-        <span className="h-px w-6 bg-primary shrink-0" />
-        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Resources</p>
-      </div>
-      <div className="max-w-prose space-y-3">
+    <SectionBlock id="resources" label="Resources">
+      <div className="grid gap-3 md:grid-cols-2">
         {resources.map((resource) => (
           <a
             key={resource.href}
             href={resource.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-start justify-between gap-4 p-4 rounded-xl border border-border bg-muted/40 hover:border-primary/40 hover:bg-muted/60 transition-all"
+            className="group flex min-h-32 items-start justify-between gap-4 rounded-lg border border-border bg-muted/40 p-5 hover:border-primary/40 hover:bg-muted/60 transition-all"
           >
             <div>
               <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
@@ -51,7 +49,7 @@ const ResourcesSection = () => {
           </a>
         ))}
       </div>
-    </section>
+    </SectionBlock>
   );
 };
 

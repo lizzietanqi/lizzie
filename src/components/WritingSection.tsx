@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/cleve";
+import SectionBlock from "@/components/SectionBlock";
 import ActivityMap from "./ActivityMap";
 
 const formatNoteDate = (timestamp: number | null | undefined) => {
@@ -22,11 +23,7 @@ const WritingSection = () => {
   const posts = notes?.slice(0, 3) ?? [];
 
   return (
-    <section id="writing" className="py-16 md:py-20 border-t border-border">
-      <div className="flex items-center gap-3 mb-8">
-        <span className="h-px w-6 bg-primary shrink-0" />
-        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Writing</p>
-      </div>
+    <SectionBlock id="writing" label="Writing">
       {!isLoading && !isError && notes && notes.length > 0 && (
         <ActivityMap notes={notes} />
       )}
@@ -34,12 +31,12 @@ const WritingSection = () => {
         <div className="mb-10 h-[110px] rounded-lg bg-muted/40 animate-pulse" />
       )}
 
-      <div className="max-w-prose">
-        <div className="space-y-4 mb-10">
+      <div>
+        <div className="mb-10 border-y border-border">
           {isLoading && (
             <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="p-4 rounded-xl border border-transparent">
+                <div key={i} className="p-4 border-b border-border last:border-b-0">
                   <div className="h-4 w-3/4 bg-muted animate-pulse rounded mb-2" />
                   <div className="h-3 w-1/3 bg-muted animate-pulse rounded" />
                 </div>
@@ -58,7 +55,7 @@ const WritingSection = () => {
             <Link
               key={post.id}
               to={`/blog/${post.id}`}
-              className="group flex items-start justify-between gap-4 p-4 rounded-xl border border-transparent hover:border-border hover:bg-muted/40 transition-all"
+              className="group flex items-start justify-between gap-4 border-b border-border p-4 transition-colors last:border-b-0 hover:bg-muted/35"
             >
               <div>
                 <p className="text-base font-medium group-hover:text-primary transition-colors">
@@ -92,7 +89,7 @@ const WritingSection = () => {
           </a>
         </div>
       </div>
-    </section>
+    </SectionBlock>
   );
 };
 

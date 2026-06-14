@@ -1,10 +1,43 @@
-# Personal Website — Built with Cleve, Lovable & Claude Code
+# Ashvin's Personal Website
 
-A minimal personal website that pulls your public writing directly from [Cleve](https://cleve.ai). This README walks you through how to build your own version from scratch — the same way this one was made.
+A minimal personal website for builders who want their writing, projects, and story in one place.
 
----
+This site is built with React, Vite, Tailwind, shadcn/ui, Convex, and [Cleve](https://cleve.ai). The interesting part is the writing system: blog posts are not stored in this repo. They are published from a public Cleve profile and pulled into the website automatically through a small Convex HTTP proxy.
 
-## Get it running in 5 minutes
+That means you can use this as a personal website template where:
+
+- your homepage is edited in code
+- your blog is powered by Cleve
+- new public Cleve notes show up without redeploying
+- the whole thing can run on free tiers
+
+## Demo Shape
+
+The site includes:
+
+- Hero with profile links
+- Work and projects
+- Expandable About section
+- Writing section powered by Cleve
+- Activity heatmap for recent writing habits
+- `/blog` writing index
+- `/blog/:id` individual post pages
+- A side panel preview when clicking writing activity cells
+
+## Tech Stack
+
+| Layer | Tool |
+| --- | --- |
+| App | React 18 + Vite |
+| Styling | Tailwind CSS + shadcn/ui |
+| Routing | React Router |
+| Data fetching | TanStack Query |
+| Backend proxy | Convex HTTP actions |
+| Writing source | Cleve public profile |
+| Analytics | Vercel Analytics |
+| Hosting | Vercel |
+
+## Quickstart
 
 ```bash
 git clone https://github.com/ashvinpraveen/ashvinpersonalwebsite.git
@@ -13,141 +46,423 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173).
+Open:
 
-Set up your environment variables — create a `.env.local` file in the root:
-
+```text
+http://localhost:8080
 ```
-VITE_CONVEX_URL=your_convex_url
+
+The frontend will load, but the Writing section needs Convex environment variables before it can fetch Cleve notes.
+
+## Environment Variables
+
+Create `.env.local` in the project root:
+
+```bash
+VITE_CONVEX_URL=your_convex_cloud_url
 VITE_CONVEX_SITE_URL=your_convex_site_url
 ```
 
-Then start Convex:
+Do not commit `.env.local`.
+
+`VITE_CONVEX_URL` is the normal Convex deployment URL.
+
+`VITE_CONVEX_SITE_URL` is the Convex HTTP Actions URL. It usually looks like:
+
+```text
+https://your-deployment.convex.site
+```
+
+The frontend calls:
+
+```text
+${VITE_CONVEX_SITE_URL}/cleve-proxy?resource=notes
+${VITE_CONVEX_SITE_URL}/cleve-proxy?resource=note&id=<note_id>
+```
+
+## Set Up Convex
+
+This project uses Convex only as a public proxy for Cleve writing. It does not store private user data.
+
+Start Convex locally:
 
 ```bash
 npx convex dev
 ```
 
-By default, the Writing section reads from Ashvin's public Cleve profile:
+The Convex function is in:
 
+```text
+convex/http.ts
 ```
+
+It exposes:
+
+```text
+GET /cleve-proxy?resource=notes
+GET /cleve-proxy?resource=note&id=<note_id>
+```
+
+By default, the proxy reads from Ashvin's public Cleve profile:
+
+```text
 https://app.cleve.ai/user/ashvinpraveen
 ```
 
-To use a different public profile, set this Convex environment variable:
+To use your own Cleve profile, set this Convex environment variable:
 
-```
-CLEVE_PUBLIC_PROFILE_SLUG=your_cleve_username
-```
-
----
-
-## Make it yours
-
-Before changing any code, use Cleve to write out who you are and what you want to say. The site is only as good as the clarity of thought behind it.
-
-Open Cleve and write a note answering these questions:
-
-```
-Who am I and what do I actually do? (not the LinkedIn version)
-What have I built or worked on that I want people to know about?
-How do I think? What are my actual mental models?
-A few true things about me that aren't on my resume.
-How do I want people to feel when they land on my site?
+```bash
+npx convex env set CLEVE_PUBLIC_PROFILE_SLUG your_cleve_username
 ```
 
-Once you have that, use it as context to update each section:
+For example, if your public Cleve profile is:
 
-- `src/components/HeroSection.tsx` — your name, title, one-line description
-- `src/components/AboutSection.tsx` — your story in your own words
-- `src/components/WorkSection.tsx` — what you're working on now
-- `src/components/ThinkingSection.tsx` — how you actually think
-- `src/components/FactsSection.tsx` — a few true things about you
-- `src/components/ContactSection.tsx` — how people can reach you
+```text
+https://app.cleve.ai/user/janedoe
+```
 
-Replace the photos in `public/` with your own and update the references in HeroSection and AboutSection.
+set:
 
----
+```bash
+npx convex env set CLEVE_PUBLIC_PROFILE_SLUG janedoe
+```
 
-## How this was built
+Then publish your Convex functions:
 
-This wasn't built by writing code from scratch. Here's the actual process:
+```bash
+npx convex dev --once
+```
 
-### 1. Write the brief in Cleve
+## How Cleve Powers The Blog
 
-Before touching any tools, the content was written out in Cleve — who Ashvin is, what Cleve.ai does, the tone of the site, what sections it should have. Cleve's memory meant the AI had full context on the writing style and background, so the generated copy didn't sound generic.
+Cleve is the writing source of truth.
 
-The prompt for Lovable was written inside Cleve too, so it was grounded in real context before being handed off to a builder.
+The flow is:
 
-### 2. Build the initial site in Lovable
+```text
+Public Cleve profile
+  -> Convex HTTP action at /cleve-proxy
+  -> src/lib/cleve.ts
+  -> WritingSection, ActivityMap, /blog, /blog/:id
+```
 
-The brief from Cleve was used as a prompt in [Lovable](https://lovable.dev) to generate the initial React + Vite + Tailwind site. Lovable handles the scaffolding fast — routing, components, dark mode, responsive layout.
+When you publish notes on your public Cleve profile:
 
-The initial output was a solid starting point but needed iteration on copy, layout, and actual personalisation.
+1. The homepage Writing section updates.
+2. The `/blog` page updates.
+3. The activity map updates.
+4. Individual posts are available at `/blog/:id`.
 
-### 3. Sync to GitHub and open in Claude Code
+You do not need to edit markdown files or redeploy the site for new writing.
 
-Once the base was built in Lovable, the repo was synced to GitHub and cloned locally. From there, everything was iterated in [Claude Code](https://claude.ai/claude-code) — a terminal-based AI coding assistant.
+## Make This Your Own
 
-Claude Code is where the real refinement happened: cleaning up copy, adding photos, fixing the navbar, wiring up APIs, migrating the backend.
+The fastest way to use this template is:
 
-### 4. Connect the Cleve MCP for contextualised iteration
+1. Fork the repo.
+2. Create your own Convex deployment.
+3. Point `CLEVE_PUBLIC_PROFILE_SLUG` at your Cleve username.
+4. Replace the homepage content with your own story.
+5. Deploy to Vercel.
 
-The [Cleve MCP](https://cleve.ai) was connected to Claude Code so that every edit was made with full context on the project — the writing style, the goals, the decisions made along the way. This meant Claude wasn't starting cold on every prompt.
+### 1. Fork Or Clone
 
-If you're iterating on your own site in Claude Code, connect Cleve's MCP server so your notes are available as context mid-session.
+Click **Use this template** or fork the repo on GitHub.
 
-### 5. Add Cleve public writing sync
+Or clone manually:
 
-The Writing section pulls notes directly from your public Cleve profile. Any note you publish in Cleve automatically shows up on the site — no CMS, no manual publishing.
+```bash
+git clone https://github.com/ashvinpraveen/ashvinpersonalwebsite.git my-personal-site
+cd my-personal-site
+npm install
+```
 
-To use this:
-1. Publish notes on your Cleve profile
-2. Keep `CLEVE_PUBLIC_PROFILE_SLUG=ashvinpraveen`, or change it to your own Cleve username in Convex
-3. Visit `/blog`
+### 2. Create Your Cleve Writing Profile
 
-### 6. Migrate the backend to Convex
+Create a free Cleve account:
 
-The site started with Supabase (via Lovable) for the backend. To have full ownership, the backend was migrated to [Convex](https://convex.dev).
+```text
+https://cleve.ai
+```
 
-Convex handles:
-- **`/cleve-proxy`** — a serverless HTTP action that reads Cleve's public publishing queries and normalizes them for the site
+Write notes in Cleve and publish the ones you want to show on your site.
 
-The Convex functions live in `convex/http.ts`.
+Your public writing profile should look like:
 
----
+```text
+https://app.cleve.ai/user/your_username
+```
 
-## Stack
+Use `your_username` as `CLEVE_PUBLIC_PROFILE_SLUG` in Convex.
 
-| Layer | Tool |
-|-------|------|
-| Framework | React 18 + Vite |
-| Styling | Tailwind CSS + shadcn/ui |
-| Backend | Convex |
-| Writing sync | Cleve public profile |
-| Analytics | Vercel Analytics |
-| Deployment | Vercel |
+### 3. Customize The Homepage
 
----
+Most of the personal content lives in small React components:
 
-## Deploying
+| Section | File |
+| --- | --- |
+| Navigation | `src/components/SiteNav.tsx` |
+| Hero | `src/components/HeroSection.tsx` |
+| Work | `src/components/WorkSection.tsx` |
+| Involvement | `src/components/InvolvementSection.tsx` |
+| About | `src/components/AboutSection.tsx` |
+| Writing preview | `src/components/WritingSection.tsx` |
+| Interests | `src/components/InterestsSection.tsx` |
+| Resources | `src/components/ResourcesSection.tsx` |
+| Contact | `src/components/ContactSection.tsx` |
+| Footer | `src/components/Footer.tsx` |
 
-Connect the repo to [Vercel](https://vercel.com). It will detect Vite automatically.
+Shared layout primitives live in:
 
-Add your environment variables in Vercel project settings:
-- `VITE_CONVEX_URL`
-- `VITE_CONVEX_SITE_URL`
+```text
+src/lib/layout.ts
+src/components/SectionBlock.tsx
+```
 
-If you are not using Ashvin's profile, set `CLEVE_PUBLIC_PROFILE_SLUG` in Convex.
+The Cleve writing client lives in:
 
----
+```text
+src/lib/cleve.ts
+```
 
-## The writing section
+### 4. Replace Images And Links
 
-The `/blog` route fetches public Cleve notes from `https://app.cleve.ai/user/ashvinpraveen` and renders them as a reading list. Individual notes are at `/blog/:id`.
+Add your images to:
 
-To populate it: write in Cleve, mark notes as public, and they appear automatically. No deploy needed.
+```text
+public/
+```
 
----
+Then update references in:
 
-Built by [Ashvin Praveen](https://ashvinpraveen.com) · Co-founder & CEO, [Cleve.ai](https://cleve.ai)
+```text
+src/components/HeroSection.tsx
+```
+
+Also update:
+
+- social profile links
+- work/project links
+- contact email
+- Cal.com link, if you use one
+- resources you want to recommend
+
+### 5. Run Locally
+
+In one terminal:
+
+```bash
+npm run dev
+```
+
+In another terminal:
+
+```bash
+npx convex dev
+```
+
+Open:
+
+```text
+http://localhost:8080
+```
+
+## Deploy For Free
+
+You can run this on free tiers:
+
+- Cleve for public writing
+- Convex for the HTTP proxy
+- Vercel for hosting
+
+### Deploy Convex
+
+Make sure your Cleve username is set:
+
+```bash
+npx convex env set CLEVE_PUBLIC_PROFILE_SLUG your_cleve_username
+```
+
+Deploy Convex:
+
+```bash
+npx convex deploy
+```
+
+Copy your Convex URLs into your production environment variables:
+
+```bash
+VITE_CONVEX_URL=your_convex_cloud_url
+VITE_CONVEX_SITE_URL=your_convex_site_url
+```
+
+### Deploy Vercel
+
+Import the GitHub repo into [Vercel](https://vercel.com).
+
+Use the default Vite settings:
+
+```text
+Build command: npm run build
+Output directory: dist
+```
+
+Add these Vercel environment variables:
+
+```bash
+VITE_CONVEX_URL=your_convex_cloud_url
+VITE_CONVEX_SITE_URL=your_convex_site_url
+```
+
+Deploy.
+
+## How The Writing UI Works
+
+### Homepage
+
+`src/components/WritingSection.tsx` fetches public Cleve notes and shows:
+
+- activity heatmap
+- three latest posts
+- links to all writing and LinkedIn
+
+### Blog Index
+
+`src/pages/Blog.tsx` fetches the same public notes and renders all posts at:
+
+```text
+/blog
+```
+
+### Blog Post
+
+`src/pages/BlogPost.tsx` fetches one note by ID and renders it at:
+
+```text
+/blog/:id
+```
+
+### Activity Map
+
+`src/components/ActivityMap.tsx` groups posts by publish date and renders a year-long writing heatmap.
+
+On small screens, the chart starts scrolled to the recent end so the focus is on current habit building. You can still scroll backward to older months.
+
+Hovering a filled cell previews the post. Clicking opens the post in a side panel.
+
+## Commands
+
+```bash
+npm run dev        # start local Vite dev server
+npm run build      # production build
+npm run lint       # lint project
+npm run test       # run tests
+npx convex dev     # run Convex locally
+npx convex deploy  # deploy Convex functions
+```
+
+## Troubleshooting
+
+### Writing section says it cannot load posts
+
+Check that `.env.local` includes:
+
+```bash
+VITE_CONVEX_URL=...
+VITE_CONVEX_SITE_URL=...
+```
+
+Then check your Convex HTTP action:
+
+```text
+https://your-deployment.convex.site/cleve-proxy?resource=notes
+```
+
+It should return JSON with a `data` array.
+
+### It still shows Ashvin's posts
+
+Set your own Cleve profile slug in Convex:
+
+```bash
+npx convex env set CLEVE_PUBLIC_PROFILE_SLUG your_cleve_username
+```
+
+Then redeploy or restart Convex:
+
+```bash
+npx convex dev --once
+```
+
+### My Cleve posts do not show up
+
+Make sure the notes are published to your public Cleve profile. Private notes will not appear.
+
+### The frontend works but `/cleve-proxy` does not
+
+Run:
+
+```bash
+npx convex dev
+```
+
+or deploy your Convex functions:
+
+```bash
+npx convex deploy
+```
+
+### Vercel deploy works but writing is broken
+
+Make sure Vercel has:
+
+```bash
+VITE_CONVEX_URL
+VITE_CONVEX_SITE_URL
+```
+
+And make sure Convex has:
+
+```bash
+CLEVE_PUBLIC_PROFILE_SLUG
+```
+
+## Project Structure
+
+```text
+convex/
+  http.ts                    # Cleve public notes proxy
+
+src/
+  components/
+    ActivityMap.tsx           # writing heatmap + post side panel
+    HeroSection.tsx
+    AboutSection.tsx
+    WritingSection.tsx
+    ...
+  lib/
+    cleve.ts                  # frontend client for /cleve-proxy
+    layout.ts                 # shared width/layout classes
+  pages/
+    Blog.tsx
+    BlogPost.tsx
+    Index.tsx
+```
+
+## Philosophy
+
+Most personal websites go stale because publishing requires too much ceremony.
+
+This setup keeps the stable parts in code and the living parts in Cleve:
+
+- code owns layout and identity
+- Cleve owns thinking and writing
+- Convex safely connects them
+
+Write in Cleve. Publish when ready. Your website becomes a public record of what you are learning and building.
+
+## Credits
+
+Built by [Ashvin Praveen](https://ashvinpraveen.com), co-founder and CEO of [Cleve](https://cleve.ai).
+
+Use it, remix it, and make it yours.

@@ -1,3 +1,5 @@
+import SectionBlock from "@/components/SectionBlock";
+
 const projects = [
   {
     name: "National AI Competition (NAIC)",
@@ -37,16 +39,12 @@ const projects = [
 
 const InvolvementSection = () => {
   return (
-    <section id="involvement" className="py-16 md:py-20 border-t border-border">
-      <div className="flex items-center gap-3 mb-8">
-        <span className="h-px w-6 bg-primary shrink-0" />
-        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Also Involved In</p>
-      </div>
-      <div className="max-w-prose space-y-4">
+    <SectionBlock id="involvement" label="Also Involved In">
+      <div className="grid gap-4 md:grid-cols-2">
         {projects.map((project) => (
           <div
             key={project.href}
-            className="rounded-xl border border-border bg-muted/40 p-5 hover:border-primary/40 hover:bg-muted/60 transition-all"
+            className="flex h-full flex-col rounded-lg border border-border bg-muted/40 p-5 hover:border-primary/40 hover:bg-muted/60 transition-all"
           >
             <div className="flex items-start justify-between gap-4 mb-2">
               <div className="flex items-center gap-3">
@@ -76,10 +74,10 @@ const InvolvementSection = () => {
                 {project.role}
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-foreground/80 pl-12">
+            <p className="text-sm leading-relaxed text-foreground/80">
               {project.description}
             </p>
-            <div className="mt-3 pl-12">
+            <div className="mt-auto pt-4">
               <a
                 href={project.sourceHref}
                 target="_blank"
@@ -92,7 +90,7 @@ const InvolvementSection = () => {
           </div>
         ))}
       </div>
-    </section>
+    </SectionBlock>
   );
 };
 

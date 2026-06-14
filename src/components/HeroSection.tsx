@@ -46,7 +46,7 @@ const socials = [
 const HeroSection = () => {
   return (
     <section id="hero" className="pt-16 pb-16 md:pt-24 md:pb-24">
-      <div className="flex flex-col-reverse md:flex-row md:items-start md:justify-between gap-10">
+      <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_16rem] md:items-start">
         <div className="max-w-prose">
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-[1.05] mb-4">
             Ashvin Praveen
@@ -73,7 +73,7 @@ const HeroSection = () => {
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-2 px-3.5 py-2 rounded-xl border border-border bg-muted/40 hover:border-primary/40 hover:bg-muted/60 transition-all"
+                className="group flex items-center gap-2 px-3.5 py-2 rounded-lg border border-border bg-muted/40 hover:border-primary/40 hover:bg-muted/60 transition-all"
               >
                 <img
                   src={social.icon}
@@ -95,11 +95,13 @@ const HeroSection = () => {
             ))}
           </div>
         </div>
-        <img
-          src="/ashvin-profile.png"
-          alt="Ashvin Praveen"
-          className="w-32 h-32 md:w-44 md:h-44 rounded-2xl object-cover object-top shrink-0 ring-4 ring-primary/15"
-        />
+        <div className="flex flex-col gap-4">
+          <img
+            src="/ashvin-profile.png"
+            alt="Ashvin Praveen"
+            className="w-32 h-32 md:w-full md:h-auto md:aspect-square rounded-lg object-cover object-top shrink-0 ring-1 ring-border"
+          />
+        </div>
       </div>
     </section>
   );

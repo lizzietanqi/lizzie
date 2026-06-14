@@ -1,3 +1,5 @@
+import SectionBlock from "@/components/SectionBlock";
+
 const FactsSection = () => {
   const facts = [
     "Born in Sarawak. Studied in Sheffield. Based in KL.",
@@ -6,10 +8,7 @@ const FactsSection = () => {
   ];
 
   return (
-    <section className="py-16 md:py-20 border-t border-border">
-      <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-8">
-        A Few Things
-      </p>
+    <SectionBlock label="A Few Things">
       <ul className="max-w-prose space-y-3">
         {facts.map((fact, i) => (
           <li key={i} className="flex gap-3 text-base leading-relaxed text-foreground/90">
@@ -18,7 +17,7 @@ const FactsSection = () => {
           </li>
         ))}
       </ul>
-    </section>
+    </SectionBlock>
   );
 };
 

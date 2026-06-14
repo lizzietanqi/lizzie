@@ -1,3 +1,5 @@
+import SectionBlock from "@/components/SectionBlock";
+
 const interests = [
   "Music",
   "Running",
@@ -10,12 +12,8 @@ const interests = [
 
 const InterestsSection = () => {
   return (
-    <section id="interests" className="py-16 md:py-20 border-t border-border">
-      <div className="flex items-center gap-3 mb-8">
-        <span className="h-px w-6 bg-primary shrink-0" />
-        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Interests</p>
-      </div>
-      <div className="flex flex-wrap gap-2 max-w-prose">
+    <SectionBlock id="interests" label="Interests">
+      <div className="flex flex-wrap gap-2">
         {interests.map((item, i) => (
           <span
             key={i}
@@ -25,7 +23,7 @@ const InterestsSection = () => {
           </span>
         ))}
       </div>
-    </section>
+    </SectionBlock>
   );
 };
 

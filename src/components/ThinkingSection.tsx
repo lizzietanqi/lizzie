@@ -1,3 +1,5 @@
+import SectionBlock from "@/components/SectionBlock";
+
 const ThinkingSection = () => {
   const models = [
     {
@@ -17,10 +19,7 @@ const ThinkingSection = () => {
   ];
 
   return (
-    <section className="py-16 md:py-20 border-t border-border">
-      <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest mb-8">
-        What I Believe
-      </p>
+    <SectionBlock label="What I Believe">
       <div className="max-w-prose">
         <div className="space-y-8">
           {models.map((model, i) => (
@@ -40,7 +39,7 @@ const ThinkingSection = () => {
           ))}
         </div>
       </div>
-    </section>
+    </SectionBlock>
   );
 };
 

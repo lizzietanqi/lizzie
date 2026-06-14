@@ -1,3 +1,5 @@
+import SectionBlock from "@/components/SectionBlock";
+
 type WorkItem = {
   name: string;
   href: string;
@@ -25,69 +27,69 @@ const work: WorkItem[] = [
 
 const WorkSection = () => {
   return (
-    <section id="work" className="py-16 md:py-20 border-t border-border">
-      <div className="flex items-center gap-3 mb-8">
-        <span className="h-px w-6 bg-primary shrink-0" />
-        <p className="font-mono text-xs text-muted-foreground uppercase tracking-widest">What I'm Building</p>
-      </div>
-      <div className="max-w-prose space-y-4">
+    <SectionBlock id="work" label="What I'm Building">
+      <div className="space-y-4">
         {work.map((item) => (
           <div
             key={item.href}
-            className="rounded-xl border border-border bg-muted/40 p-5 hover:border-primary/40 hover:bg-muted/60 transition-all"
+            className="rounded-lg border border-border bg-muted/40 p-5 md:p-6 hover:border-primary/40 hover:bg-muted/60 transition-all"
           >
-            <div className="flex items-center gap-3 mb-3">
-              {item.logo ? (
-                <img
-                  src={item.logo}
-                  alt={item.alt ?? item.name}
-                  className="w-9 h-9 rounded-lg object-contain shrink-0"
-                />
-              ) : (
-                <span className="flex w-9 h-9 items-center justify-center rounded-lg border border-border bg-background font-mono text-xs font-semibold text-primary shrink-0">
-                  {item.initials}
-                </span>
-              )}
-              <h3 className="text-lg font-semibold">
+            <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  {item.logo ? (
+                    <img
+                      src={item.logo}
+                      alt={item.alt ?? item.name}
+                      className="w-10 h-10 rounded-lg object-contain shrink-0"
+                    />
+                  ) : (
+                    <span className="flex w-10 h-10 items-center justify-center rounded-lg border border-border bg-background font-mono text-xs font-semibold text-primary shrink-0">
+                      {item.initials}
+                    </span>
+                  )}
+                  <h3 className="text-lg font-semibold">
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-primary transition-colors"
+                    >
+                      {item.name} ↗
+                    </a>
+                  </h3>
+                </div>
+                <div className="max-w-2xl space-y-3 text-base leading-relaxed text-foreground/90">
+                  {item.description.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-2 md:flex-col md:items-end">
                 <a
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
+                  className="font-mono text-sm text-primary hover:underline underline-offset-4 transition-colors"
                 >
-                  {item.name} ↗
+                  {item.cta} →
                 </a>
-              </h3>
-            </div>
-            <div className="space-y-3 text-base leading-relaxed text-foreground/90">
-              {item.description.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-            <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
-              <a
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-sm text-primary hover:underline underline-offset-4 transition-colors"
-              >
-                {item.cta} →
-              </a>
-              {item.sourceHref && (
-                <a
-                  href={item.sourceHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors"
-                >
-                  Source →
-                </a>
-              )}
+                {item.sourceHref && (
+                  <a
+                    href={item.sourceHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors"
+                  >
+                    Source →
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         ))}
       </div>
-    </section>
+    </SectionBlock>
   );
 };
 
