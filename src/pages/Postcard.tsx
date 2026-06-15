@@ -1,7 +1,9 @@
 import { FormEvent, PointerEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
+import { Heart } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 import Footer from "@/components/Footer";
 import Seo from "@/components/Seo";
 import SiteNav from "@/components/SiteNav";
@@ -11,6 +13,7 @@ import { contentColumnClassName, pageShellClassName } from "@/lib/layout";
 import { cn } from "@/lib/utils";
 
 const MAX_MESSAGE_LENGTH = 500;
+const CLIENT_ID_KEY = "postcard-client-id";
 const drawingPlacements = [
   { left: "8%", top: "18%", width: "28%", rotate: "-4deg" },
   { left: "36%", top: "8%", width: "24%", rotate: "3deg" },
@@ -26,6 +29,18 @@ function formatPostcardDate(timestamp: number) {
     day: "numeric",
     year: "numeric",
   });
+}
+
+function getOrCreateClientId() {
+  const existingClientId = window.localStorage.getItem(CLIENT_ID_KEY);
+  if (existingClientId) return existingClientId;
+
+  const clientId =
+    typeof window.crypto?.randomUUID === "function"
+      ? window.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  window.localStorage.setItem(CLIENT_ID_KEY, clientId);
+  return clientId;
 }
 
 const DrawingPad = ({
@@ -208,8 +223,13 @@ const DrawingField = ({
 };
 
 const Postcard = () => {
-  const postcards = useQuery(api.postcards.list);
+  const [clientId, setClientId] = useState("");
+  const postcards = useQuery(
+    api.postcards.list,
+    clientId ? { clientId } : "skip",
+  );
   const createPostcard = useMutation(api.postcards.create);
+  const togglePostcardLike = useMutation(api.postcards.toggleLike);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -217,6 +237,11 @@ const Postcard = () => {
   const [hasDrawing, setHasDrawing] = useState(false);
   const [resetKey, setResetKey] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [likingPostcardId, setLikingPostcardId] = useState<Id<"postcards"> | null>(null);
+
+  useEffect(() => {
+    setClientId(getOrCreateClientId());
+  }, []);
 
   function getDrawingDataUrl() {
     const canvas = document.querySelector<HTMLCanvasElement>("#postcard-drawing");
@@ -253,6 +278,19 @@ const Postcard = () => {
     }
   }
 
+  async function handleLike(postcardId: Id<"postcards">) {
+    if (!clientId) return;
+
+    setLikingPostcardId(postcardId);
+    try {
+      await togglePostcardLike({ postcardId, clientId });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save like.");
+    } finally {
+      setLikingPostcardId(null);
+    }
+  }
+
   return (
     <>
       <Seo
@@ -274,10 +312,10 @@ const Postcard = () => {
           <section className="space-y-12">
             <div className="max-w-2xl space-y-3">
               <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                Leave a postcard
+                Drop a thought
               </h1>
               <p className="text-base leading-relaxed text-muted-foreground">
-                Write a note, draw something small, and send it to the wall.
+                What's something you learned today? Or something random you're thinking about? Share a thought, a story, or a tiny drawing. I read and reply to everything.
               </p>
             </div>
 
@@ -342,7 +380,7 @@ const Postcard = () => {
                         {message.length}/{MAX_MESSAGE_LENGTH}
                       </p>
                       <Button type="submit" disabled={isSubmitting} className="rounded-[8px] font-mono text-xs">
-                        {isSubmitting ? "Sending..." : "Send to wall →"}
+                        {isSubmitting ? "Sharing..." : "Share →"}
                       </Button>
                     </div>
                   </div>
@@ -353,9 +391,14 @@ const Postcard = () => {
             <DrawingField postcards={postcards} />
 
             <section className="space-y-6 border-t border-border pt-12">
-              <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                Wall
-              </h2>
+              <div className="max-w-2xl space-y-2">
+                <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                  Wall
+                </h2>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Thoughts, lessons, stories, and little sketches from people passing through. Heart the ones you like; the wall floats them higher.
+                </p>
+              </div>
 
               {postcards && postcards.length === 0 && (
                 <div className="rounded-[12px] border border-dashed border-border p-8 text-sm text-muted-foreground">
@@ -384,6 +427,16 @@ const Postcard = () => {
                         {postcard.message}
                       </p>
                     </div>
+                    {postcard.reply && (
+                      <div className="mt-5 rounded-[8px] border border-border bg-background/70 p-4 dark:bg-muted/70">
+                        <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-primary">
+                          Ashvin replied
+                        </p>
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+                          {postcard.reply}
+                        </p>
+                      </div>
+                    )}
                     <footer className="mt-6 flex items-end justify-between gap-4 border-t border-dashed border-border pt-4">
                       <div>
                         <p className="text-sm font-medium text-foreground">
@@ -399,6 +452,24 @@ const Postcard = () => {
                         {formatPostcardDate(postcard.createdAt)}
                       </time>
                     </footer>
+                    <button
+                      type="button"
+                      onClick={() => handleLike(postcard._id)}
+                      disabled={likingPostcardId === postcard._id}
+                      aria-pressed={postcard.isLiked}
+                      className={cn(
+                        "mt-5 flex w-fit items-center gap-2 rounded-full border border-border px-3 py-1.5 font-mono text-[10px] transition-colors",
+                        postcard.isLiked
+                          ? "border-primary/70 bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:border-primary/50 hover:text-foreground",
+                      )}
+                    >
+                      <Heart
+                        className={cn("h-3.5 w-3.5", postcard.isLiked && "fill-current")}
+                        aria-hidden="true"
+                      />
+                      <span>{postcard.likeCount ?? 0}</span>
+                    </button>
                   </article>
                 ))}
               </div>

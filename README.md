@@ -80,9 +80,17 @@ ${VITE_CONVEX_SITE_URL}/cleve-proxy?resource=notes
 ${VITE_CONVEX_SITE_URL}/cleve-proxy?resource=note&id=<note_id>
 ```
 
+The postcard admin page at `/admin/postcards` also needs a server-side Convex
+password:
+
+```bash
+npx convex env set POSTCARD_ADMIN_SECRET your_admin_password
+```
+
 ## Set Up Convex
 
-This project uses Convex only as a public proxy for Cleve writing. It does not store private user data.
+This project uses Convex as the public proxy for Cleve writing and as the tiny
+database behind the postcard wall.
 
 Start Convex locally:
 

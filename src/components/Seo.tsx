@@ -9,6 +9,7 @@ type SeoProps = {
   image?: string;
   path?: string;
   type?: "website" | "article";
+  noIndex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 };
 
@@ -61,6 +62,7 @@ const Seo = ({
   image = DEFAULT_IMAGE,
   path = "/",
   type = "website",
+  noIndex = false,
   jsonLd,
 }: SeoProps) => {
   useEffect(() => {
@@ -87,8 +89,13 @@ const Seo = ({
     setMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
     setMeta('meta[name="twitter:image"]', "name", "twitter:image", image);
     setMeta('meta[name="twitter:image:alt"]', "name", "twitter:image:alt", "Ashvin Praveen");
+    if (noIndex) {
+      setMeta('meta[name="robots"]', "name", "robots", "noindex,nofollow");
+    } else {
+      document.head.querySelector<HTMLMetaElement>('meta[name="robots"]')?.remove();
+    }
     setJsonLd(jsonLd);
-  }, [description, image, jsonLd, path, title, type]);
+  }, [description, image, jsonLd, noIndex, path, title, type]);
 
   return null;
 };

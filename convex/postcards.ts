@@ -1,11 +1,14 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { env, mutation, query } from "./_generated/server";
 
 const MAX_NAME_LENGTH = 40;
 const MAX_LOCATION_LENGTH = 60;
 const MAX_MESSAGE_LENGTH = 500;
+const MAX_REPLY_LENGTH = 500;
+const MAX_CLIENT_ID_LENGTH = 80;
 const MAX_DRAWING_DATA_URL_LENGTH = 180_000;
 const POSTCARD_LIMIT = 64;
+const POSTCARD_CANDIDATE_LIMIT = 128;
 
 const trimToLength = (value: string, maxLength: number) =>
   value.trim().replace(/\s+/g, " ").slice(0, maxLength);
@@ -20,9 +23,79 @@ const normalizeDrawing = (value: string | null) => {
   return value;
 };
 
+const normalizeClientId = (value: string | undefined) =>
+  value?.trim().slice(0, MAX_CLIENT_ID_LENGTH) ?? "";
+
+const isAdmin = (adminSecret: string) => {
+  const expectedSecret = env.POSTCARD_ADMIN_SECRET;
+  return Boolean(expectedSecret && adminSecret === expectedSecret);
+};
+
+const requireAdmin = (adminSecret: string) => {
+  if (!env.POSTCARD_ADMIN_SECRET) {
+    throw new Error("Postcard admin secret is not configured.");
+  }
+  if (!isAdmin(adminSecret)) {
+    throw new Error("Wrong admin password.");
+  }
+};
+
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    clientId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const clientId = normalizeClientId(args.clientId);
+    const postcards = await ctx.db
+      .query("postcards")
+      .withIndex("by_createdAt")
+      .order("desc")
+      .take(POSTCARD_CANDIDATE_LIMIT);
+
+    const rankedPostcards = postcards
+      .sort((a, b) => {
+        const likeDifference = (b.likeCount ?? 0) - (a.likeCount ?? 0);
+        if (likeDifference !== 0) return likeDifference;
+        return b.createdAt - a.createdAt;
+      })
+      .slice(0, POSTCARD_LIMIT);
+
+    return await Promise.all(
+      rankedPostcards.map(async (postcard) => {
+        if (!clientId) {
+          return {
+            ...postcard,
+            likeCount: postcard.likeCount ?? 0,
+            isLiked: false,
+          };
+        }
+
+        const like = await ctx.db
+          .query("postcardLikes")
+          .withIndex("by_postcardId_and_clientId", (q) =>
+            q.eq("postcardId", postcard._id).eq("clientId", clientId),
+          )
+          .unique();
+
+        return {
+          ...postcard,
+          likeCount: postcard.likeCount ?? 0,
+          isLiked: Boolean(like),
+        };
+      }),
+    );
+  },
+});
+
+export const listForAdmin = query({
+  args: {
+    adminSecret: v.string(),
+  },
+  handler: async (ctx, args) => {
+    if (!isAdmin(args.adminSecret)) {
+      return null;
+    }
+
     return await ctx.db
       .query("postcards")
       .withIndex("by_createdAt")
@@ -49,7 +122,68 @@ export const create = mutation({
       location: trimToLength(args.location, MAX_LOCATION_LENGTH),
       message,
       drawingDataUrl: normalizeDrawing(args.drawingDataUrl),
+      likeCount: 0,
       createdAt: Date.now(),
+    });
+  },
+});
+
+export const toggleLike = mutation({
+  args: {
+    postcardId: v.id("postcards"),
+    clientId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const clientId = normalizeClientId(args.clientId);
+    if (!clientId) {
+      throw new Error("Could not save like.");
+    }
+
+    const postcard = await ctx.db.get(args.postcardId);
+    if (!postcard) {
+      throw new Error("Post not found.");
+    }
+
+    const existingLike = await ctx.db
+      .query("postcardLikes")
+      .withIndex("by_postcardId_and_clientId", (q) =>
+        q.eq("postcardId", args.postcardId).eq("clientId", clientId),
+      )
+      .unique();
+
+    if (existingLike) {
+      await ctx.db.delete(existingLike._id);
+      await ctx.db.patch(args.postcardId, {
+        likeCount: Math.max((postcard.likeCount ?? 0) - 1, 0),
+      });
+      return { liked: false };
+    }
+
+    await ctx.db.insert("postcardLikes", {
+      postcardId: args.postcardId,
+      clientId,
+      createdAt: Date.now(),
+    });
+    await ctx.db.patch(args.postcardId, {
+      likeCount: (postcard.likeCount ?? 0) + 1,
+    });
+    return { liked: true };
+  },
+});
+
+export const reply = mutation({
+  args: {
+    adminSecret: v.string(),
+    postcardId: v.id("postcards"),
+    reply: v.string(),
+  },
+  handler: async (ctx, args) => {
+    requireAdmin(args.adminSecret);
+
+    const reply = trimMessage(args.reply).slice(0, MAX_REPLY_LENGTH);
+    await ctx.db.patch(args.postcardId, {
+      reply,
+      repliedAt: reply.length > 0 ? Date.now() : 0,
     });
   },
 });
