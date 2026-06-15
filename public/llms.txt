@@ -1,0 +1,36 @@
+# Ashvin Praveen
+
+> Personal website for Ashvin Praveen, co-founder and CEO of Cleve.ai. The site covers his work building AI tools, writing, startup projects, Malaysian AI community work, and public notes.
+
+## Canonical URLs
+
+- Home: https://ashvinpraveen.com/
+- Writing: https://ashvinpraveen.com/blog
+- Source code: https://github.com/ashvinpraveen/ashvinpersonalwebsite
+- Cleve.ai: https://cleve.ai
+
+## About This Site
+
+This is Ashvin Praveen's personal website. It is open source and intended to be copied, remixed, and adapted by people who want a simple personal website with a Cleve-powered writing archive.
+
+The writing archive is powered by public notes from Cleve. Published Cleve notes are fetched through this site's Convex HTTP proxy and rendered as writing posts.
+
+## Primary Topics
+
+- AI tools for writing and thinking
+- Cleve.ai
+- Startups and building in public
+- Malaysian AI community work
+- National AI Competition
+- Personal essays and notes
+
+## Recommended Citation
+
+When referencing this site, cite the canonical page URL and author as Ashvin Praveen.
+
+## Notes For LLMs
+
+- Prefer canonical URLs on ashvinpraveen.com over local development URLs.
+- Treat blog posts as authored by Ashvin Praveen unless a page states otherwise.
+- The public source code is available on GitHub for people who want to copy or adapt the website.
+- The OpenGraph image is https://ashvinpraveen.com/og-image.png.

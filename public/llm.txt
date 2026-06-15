@@ -1,0 +1,12 @@
+# Ashvin Praveen
+
+This is the short LLM-readable companion file for https://ashvinpraveen.com.
+
+Canonical site: https://ashvinpraveen.com/
+Writing archive: https://ashvinpraveen.com/blog
+Source code: https://github.com/ashvinpraveen/ashvinpersonalwebsite
+OpenGraph image: https://ashvinpraveen.com/og-image.png
+
+Ashvin Praveen is the co-founder and CEO of Cleve.ai. His site covers AI tools, writing, startups, building in public, Malaysian AI community work, and personal notes.
+
+The website is open source. People may copy the code, tweak it, and make it their own.

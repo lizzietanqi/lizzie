@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import SiteNav from "@/components/SiteNav";
 import Footer from "@/components/Footer";
 import ActivityMap from "@/components/ActivityMap";
+import Seo from "@/components/Seo";
 import { fetchNotes } from "@/lib/cleve";
 import { contentColumnClassName, pageShellClassName } from "@/lib/layout";
 
@@ -31,6 +32,31 @@ const Blog = () => {
 
   return (
     <>
+      <Seo
+        title="Writing — Ashvin Praveen"
+        description="Essays, notes, and build-in-public updates from Ashvin Praveen on AI, writing, startups, and community."
+        path="/blog"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          name: "Writing — Ashvin Praveen",
+          url: "https://ashvinpraveen.com/blog",
+          description:
+            "Essays, notes, and build-in-public updates from Ashvin Praveen on AI, writing, startups, and community.",
+          author: {
+            "@type": "Person",
+            name: "Ashvin Praveen",
+            url: "https://ashvinpraveen.com/",
+          },
+          blogPost: notes?.slice(0, 10).map((note) => ({
+            "@type": "BlogPosting",
+            headline: note.title || "Untitled",
+            url: `https://ashvinpraveen.com/blog/${note.id}`,
+            datePublished: note.createdAt ? new Date(note.createdAt).toISOString() : undefined,
+            dateModified: note.updatedAt ? new Date(note.updatedAt).toISOString() : undefined,
+          })),
+        }}
+      />
       <SiteNav />
       <main className={`${pageShellClassName} pb-20 pt-24`}>
         <div className={contentColumnClassName}>

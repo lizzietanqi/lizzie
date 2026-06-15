@@ -1,5 +1,18 @@
 {
+  "functions": {
+    "api/blog-meta.js": {
+      "includeFiles": "dist/index.html"
+    }
+  },
   "rewrites": [
+    {
+      "source": "/blog/:id",
+      "destination": "/api/blog-meta?id=:id"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
     {
       "source": "/((?!.*\\..*).*)",
       "destination": "/index.html"
