@@ -1,8 +1,8 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
 import { useQuery } from "@tanstack/react-query";
 import { CleveNote, fetchNote } from "@/lib/cleve";
+import LazyRichMarkdown from "@/components/LazyRichMarkdown";
 import {
   Sheet,
   SheetContent,
@@ -388,7 +388,7 @@ const ActivityMap = ({ notes }: ActivityMapProps) => {
             {panelNote && !isLoadingNote && (
               <article className="space-y-4">
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <ReactMarkdown>{panelMarkdown}</ReactMarkdown>
+                  <LazyRichMarkdown>{panelMarkdown}</LazyRichMarkdown>
                 </div>
               </article>
             )}

@@ -89,9 +89,77 @@ const getAttrString = (attrs: unknown, key: string): string | null => {
   return typeof value === "string" ? value : null;
 };
 
+const escapeHtml = (value: string): string =>
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const escapeMarkdownText = (value: string): string =>
+  escapeHtml(value).replace(/\\/g, "\\\\").replace(/\[/g, "\\[").replace(/\]/g, "\\]").replace(/\n+/g, " ");
+
+const escapeTableCell = (value: string): string =>
+  value
+    .replace(/\|/g, "\\|")
+    .replace(/\n+/g, "<br>")
+    .trim();
+
+const sanitizeMarkdownUrl = (value: string): string =>
+  value.trim().replace(/\(/g, "%28").replace(/\)/g, "%29");
+
+const renderImageNode = (node: RichTextNode): string => {
+  const src = getAttrString(node.attrs, "src") ?? getAttrString(node.attrs, "url") ?? getAttrString(node.attrs, "href");
+  if (!src) return "";
+
+  const alt = getAttrString(node.attrs, "alt") ?? getAttrString(node.attrs, "title") ?? "Image";
+  return `![${escapeMarkdownText(alt)}](${sanitizeMarkdownUrl(src)})`;
+};
+
+const renderIframeNode = (node: RichTextNode): string => {
+  const src = getAttrString(node.attrs, "src");
+  if (!src) return "";
+
+  const title = getAttrString(node.attrs, "title") ?? "Embedded content";
+  return `<iframe src="${escapeHtml(src)}" title="${escapeHtml(title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+};
+
+const renderTableCell = (node: RichTextNode): string => {
+  const children = getChildren(node);
+  const body = children
+    .map((child) => {
+      if (child.type === "paragraph") return getChildren(child).map(renderInlineNode).join("");
+      return renderBlockNode(child);
+    })
+    .filter(Boolean)
+    .join("<br>");
+
+  return escapeTableCell(body || " ");
+};
+
+const renderTableNode = (node: RichTextNode): string => {
+  const rows = getChildren(node)
+    .filter((row) => row.type === "tableRow")
+    .map((row) =>
+      getChildren(row)
+        .filter((cell) => cell.type === "tableCell" || cell.type === "tableHeader")
+        .map(renderTableCell),
+    )
+    .filter((row) => row.length > 0);
+
+  if (rows.length === 0) return "";
+
+  const columnCount = Math.max(...rows.map((row) => row.length));
+  const normalizedRows = rows.map((row) => [
+    ...row,
+    ...Array.from({ length: columnCount - row.length }, () => " "),
+  ]);
+  const header = normalizedRows[0];
+  const separator = Array.from({ length: columnCount }, () => "---");
+  const bodyRows = normalizedRows.slice(1);
+
+  return [header, separator, ...bodyRows].map((row) => `| ${row.join(" | ")} |`).join("\n");
+};
+
 const renderInlineNode = (node: RichTextNode): string => {
   if (node.type === "text") {
-    let text = typeof node.text === "string" ? node.text : "";
+    let text = typeof node.text === "string" ? escapeHtml(node.text) : "";
     if (Array.isArray(node.marks)) {
       for (const mark of node.marks) {
         if (!isRecord(mark)) continue;
@@ -99,9 +167,13 @@ const renderInlineNode = (node: RichTextNode): string => {
         if (mark.type === "italic" || mark.type === "em") text = `_${text}_`;
         if (mark.type === "code") text = `\`${text}\``;
         if (mark.type === "strike") text = `~~${text}~~`;
+        if (mark.type === "underline") text = `<u>${text}</u>`;
+        if (mark.type === "subscript") text = `<sub>${text}</sub>`;
+        if (mark.type === "superscript") text = `<sup>${text}</sup>`;
+        if (mark.type === "highlight") text = `<mark>${text}</mark>`;
         if (mark.type === "link") {
           const href = getAttrString(mark.attrs, "href");
-          if (href) text = `[${text}](${href})`;
+          if (href) text = `[${text}](${sanitizeMarkdownUrl(href)})`;
         }
       }
     }
@@ -109,6 +181,8 @@ const renderInlineNode = (node: RichTextNode): string => {
   }
 
   if (node.type === "hardBreak") return "\n";
+  if (node.type === "image") return renderImageNode(node);
+  if (node.type === "iframe" || node.type === "youtube") return renderIframeNode(node);
 
   return getChildren(node).map(renderInlineNode).join("");
 };
@@ -130,6 +204,13 @@ const renderBlockNode = (node: RichTextNode, index = 0, listKind: "bullet" | "or
       return children.map((child, childIndex) => renderBlockNode(child, childIndex, "bullet")).filter(Boolean).join("\n");
     case "orderedList":
       return children.map((child, childIndex) => renderBlockNode(child, childIndex, "ordered")).filter(Boolean).join("\n");
+    case "taskList":
+      return children.map((child) => renderBlockNode(child, 0, "bullet")).filter(Boolean).join("\n");
+    case "taskItem": {
+      const checked = isRecord(node.attrs) && node.attrs.checked === true;
+      const body = children.map((child) => renderBlockNode(child)).filter(Boolean).join("\n  ");
+      return body ? `- [${checked ? "x" : " "}] ${body}` : "";
+    }
     case "listItem": {
       const body = children.map((child) => renderBlockNode(child)).filter(Boolean).join("\n  ");
       const prefix = listKind === "ordered" ? `${index + 1}. ` : "- ";
@@ -143,6 +224,15 @@ const renderBlockNode = (node: RichTextNode, index = 0, listKind: "bullet" | "or
       const code = children.map(renderInlineNode).join("");
       return `\`\`\`\n${code}\n\`\`\``;
     }
+    case "horizontalRule":
+      return "---";
+    case "image":
+      return renderImageNode(node);
+    case "iframe":
+    case "youtube":
+      return renderIframeNode(node);
+    case "table":
+      return renderTableNode(node);
     default:
       return children.length > 0 ? children.map((child) => renderBlockNode(child)).filter(Boolean).join("\n\n") : "";
   }

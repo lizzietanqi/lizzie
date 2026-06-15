@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
 import SiteNav from "@/components/SiteNav";
 import Footer from "@/components/Footer";
+import LazyRichMarkdown from "@/components/LazyRichMarkdown";
 import Seo from "@/components/Seo";
 import { fetchNote } from "@/lib/cleve";
 import { contentColumnClassName, pageShellClassName } from "@/lib/layout";
@@ -19,6 +19,7 @@ const formatNoteDate = (timestamp: number | null | undefined) => {
 
 const excerpt = (content: string | null | undefined) => {
   const text = content
+    ?.replace(/<[^>]+>/g, " ")
     ?.replace(/[#*_`>\-[\]()]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -101,7 +102,7 @@ const BlogPost = () => {
                 {formatNoteDate(note.createdAt)}
               </p>
               <div className="prose prose-sm dark:prose-invert max-w-none pt-4">
-                <ReactMarkdown>{note.content ?? ""}</ReactMarkdown>
+                <LazyRichMarkdown>{note.content ?? ""}</LazyRichMarkdown>
               </div>
             </article>
           )}
