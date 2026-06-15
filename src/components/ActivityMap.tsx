@@ -222,8 +222,8 @@ const ActivityMap = ({ notes }: ActivityMapProps) => {
     <>
       <div className="mb-10 flex justify-center" data-activity-panel-state={selectedDay ? "open" : "closed"}>
         <div ref={mapFrameRef} className="relative w-full max-w-4xl">
-          <div ref={scrollAreaRef} className="overflow-x-auto pb-2">
-            <div className="relative w-full" style={{ minWidth: `${viewWidth}px` }}>
+          <div ref={scrollAreaRef} className="overflow-visible pb-2">
+            <div className="relative w-full">
               <svg
                 viewBox={`0 0 ${viewWidth} ${viewHeight}`}
                 className="block h-auto w-full overflow-visible"
