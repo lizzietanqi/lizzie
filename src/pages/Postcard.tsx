@@ -1,6 +1,6 @@
-import { FormEvent, PointerEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, PointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
-import { Heart } from "lucide-react";
+import { Heart, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
@@ -22,6 +22,13 @@ const drawingPlacements = [
   { left: "48%", top: "48%", width: "30%", rotate: "-3deg" },
   { left: "73%", top: "60%", width: "18%", rotate: "4deg" },
 ];
+
+type DrawingPoint = {
+  x: number;
+  y: number;
+};
+
+type DrawingStroke = DrawingPoint[];
 
 function formatPostcardDate(timestamp: number) {
   return new Date(timestamp).toLocaleDateString("en-US", {
@@ -54,67 +61,100 @@ const DrawingPad = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawingRef = useRef(false);
+  const strokesRef = useRef<DrawingStroke[]>([]);
+  const [strokeCount, setStrokeCount] = useState(0);
 
-  const resizeCanvas = () => {
+  const prepareCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
 
     const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return null;
+
     const ratio = window.devicePixelRatio || 1;
     canvas.width = Math.floor(rect.width * ratio);
     canvas.height = Math.floor(rect.height * ratio);
 
     const context = canvas.getContext("2d");
-    if (!context) return;
+    if (!context) return null;
+
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.lineCap = "round";
     context.lineJoin = "round";
     context.lineWidth = 3;
     context.strokeStyle = "#000000";
-  };
 
-  useEffect(() => {
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-    return () => window.removeEventListener("resize", resizeCanvas);
+    return { context, width: rect.width, height: rect.height };
   }, []);
 
+  const drawStroke = useCallback((
+    context: CanvasRenderingContext2D,
+    stroke: DrawingStroke,
+    width: number,
+    height: number,
+  ) => {
+    if (stroke.length === 0) return;
+
+    context.beginPath();
+    context.moveTo(stroke[0].x * width, stroke[0].y * height);
+
+    if (stroke.length === 1) {
+      context.lineTo(stroke[0].x * width + 0.01, stroke[0].y * height + 0.01);
+    } else {
+      stroke.slice(1).forEach((point) => {
+        context.lineTo(point.x * width, point.y * height);
+      });
+    }
+
+    context.stroke();
+  }, []);
+
+  const redrawCanvas = useCallback(() => {
+    const preparedCanvas = prepareCanvas();
+    if (!preparedCanvas) return;
+
+    const { context, width, height } = preparedCanvas;
+    context.clearRect(0, 0, width, height);
+    strokesRef.current.forEach((stroke) => drawStroke(context, stroke, width, height));
+  }, [drawStroke, prepareCanvas]);
+
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-    if (!canvas || !context) return;
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    redrawCanvas();
+    window.addEventListener("resize", redrawCanvas);
+    return () => window.removeEventListener("resize", redrawCanvas);
+  }, [redrawCanvas]);
+
+  useEffect(() => {
+    strokesRef.current = [];
+    redrawCanvas();
+    setStrokeCount(0);
     onHasDrawingChange(false);
-  }, [onHasDrawingChange, resetKey]);
+  }, [onHasDrawingChange, redrawCanvas, resetKey]);
 
   function getPoint(event: PointerEvent<HTMLCanvasElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
     return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
+      x: (event.clientX - rect.left) / rect.width,
+      y: (event.clientY - rect.top) / rect.height,
     };
   }
 
   function startDrawing(event: PointerEvent<HTMLCanvasElement>) {
-    const context = event.currentTarget.getContext("2d");
-    if (!context) return;
-
     event.currentTarget.setPointerCapture(event.pointerId);
     const point = getPoint(event);
     isDrawingRef.current = true;
-    context.beginPath();
-    context.moveTo(point.x, point.y);
+    strokesRef.current = [...strokesRef.current, [point]];
+    setStrokeCount(strokesRef.current.length);
+    redrawCanvas();
   }
 
   function draw(event: PointerEvent<HTMLCanvasElement>) {
     if (!isDrawingRef.current) return;
 
-    const context = event.currentTarget.getContext("2d");
-    if (!context) return;
-
     const point = getPoint(event);
-    context.lineTo(point.x, point.y);
-    context.stroke();
+    const currentStroke = strokesRef.current[strokesRef.current.length - 1];
+    currentStroke?.push(point);
+    redrawCanvas();
     onHasDrawingChange(true);
   }
 
@@ -126,16 +166,32 @@ const DrawingPad = ({
   }
 
   function clearDrawing() {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-    if (!canvas || !context) return;
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    strokesRef.current = [];
+    redrawCanvas();
+    setStrokeCount(0);
     onHasDrawingChange(false);
+  }
+
+  function undoStroke() {
+    strokesRef.current = strokesRef.current.slice(0, -1);
+    redrawCanvas();
+    setStrokeCount(strokesRef.current.length);
+    onHasDrawingChange(strokesRef.current.length > 0);
   }
 
   return (
     <div className="space-y-3">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        <button
+          type="button"
+          onClick={undoStroke}
+          disabled={strokeCount === 0}
+          className="grid h-8 w-8 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none disabled:opacity-35"
+          aria-label="Undo last line"
+          title="Undo"
+        >
+          <Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
+        </button>
         <button
           type="button"
           onClick={clearDrawing}
