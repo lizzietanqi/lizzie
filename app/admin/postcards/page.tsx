@@ -3,7 +3,7 @@ import PostcardAdmin from "@/screens/PostcardAdmin";
 import { createMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createMetadata({
-  title: "Postcard admin — Ashvin Praveen",
+  title: "Postcard admin — Lizzie Tan",
   description: "Private postcard reply admin.",
   path: "/admin/postcards",
   noIndex: true,

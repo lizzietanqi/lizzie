@@ -7,7 +7,7 @@ const Footer = () => {
     >
       <p className="max-w-xl font-mono text-xs leading-relaxed text-muted-foreground">
         <a
-          href="https://github.com/ashvinpraveen/ashvinpersonalwebsite"
+          href="https://github.com/lizzietanqi/lizzie"
           target="_blank"
           rel="noreferrer"
           className="text-primary underline-offset-4 hover:underline"
@@ -17,7 +17,7 @@ const Footer = () => {
         . Copy the code, tweak it, make it yours.
       </p>
       <p className="font-mono text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Ashvin Praveen
+        © {new Date().getFullYear()} Lizzie Tan
       </p>
     </footer>
   );

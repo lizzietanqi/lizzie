@@ -5,9 +5,9 @@ import { absoluteUrl, createMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-const title = "Writing — Ashvin Praveen";
+const title = "Writing — Lizzie Tan";
 const description =
-  "Essays, notes, and build-in-public updates from Ashvin Praveen on AI, writing, startups, and community.";
+  "Essays, notes, and build-in-public updates from Lizzie Tan on AI, writing, startups, and community.";
 
 export const metadata: Metadata = createMetadata({
   title,
@@ -25,7 +25,7 @@ export default async function BlogPage() {
     description,
     author: {
       "@type": "Person",
-      name: "Ashvin Praveen",
+      name: "Lizzie Tan",
       url: absoluteUrl("/"),
     },
     blogPost: notes?.slice(0, 10).map((note) => ({

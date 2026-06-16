@@ -17,15 +17,15 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   if (!note) {
     return createMetadata({
-      title: "Writing — Ashvin Praveen",
-      description: "Writing by Ashvin Praveen on AI, startups, building, and learning in public.",
+      title: "Writing — Lizzie Tan",
+      description: "Writing by Lizzie Tan on AI, startups, building, and learning in public.",
       path: `/blog/${id}`,
       type: "article",
     });
   }
 
   return createMetadata({
-    title: `${note.title || "Untitled"} — Ashvin Praveen`,
+    title: `${note.title || "Untitled"} — Lizzie Tan`,
     description: excerpt(note.content),
     path: `/blog/${id}`,
     type: "article",
@@ -48,12 +48,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         dateModified: note.updatedAt ? new Date(note.updatedAt).toISOString() : undefined,
         author: {
           "@type": "Person",
-          name: "Ashvin Praveen",
+          name: "Lizzie Tan",
           url: absoluteUrl("/"),
         },
         publisher: {
           "@type": "Person",
-          name: "Ashvin Praveen",
+          name: "Lizzie Tan",
           url: absoluteUrl("/"),
         },
         mainEntityOfPage: {

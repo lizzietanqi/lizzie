@@ -18,10 +18,10 @@ const ContactSection = () => {
             cleve.ai
           </a>
           <a
-            href="mailto:ashvin@cleve.ai"
+            href="mailto:lizzie@cleve.ai"
             className="text-primary hover:underline underline-offset-4 transition-colors"
           >
-            ashvin@cleve.ai
+            lizzie@cleve.ai
           </a>
           <a
             href="https://cal.com/ashvinpraveen"

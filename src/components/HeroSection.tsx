@@ -37,7 +37,7 @@ const socials = [
   },
   {
     label: "GitHub",
-    href: "https://github.com/ashvinpraveen",
+    href: "https://github.com/lizzietanqi",
     icon: "/social-icons/GitHub_logo_black.svg",
     iconDark: "/social-icons/GitHub_logo_white.svg",
   },
@@ -49,10 +49,10 @@ const HeroSection = () => {
       <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_16rem] md:items-start">
         <div className="max-w-prose">
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-[1.05] mb-4">
-            Ashvin Praveen
+            Lizzie Tan
           </h1>
           <p className="font-mono text-sm mb-6 flex items-center gap-2">
-            <span className="text-primary font-semibold">Co-founder & CEO</span>
+            <span className="text-primary font-semibold">CMO & Co-founder</span>
             <span className="text-muted-foreground">·</span>
             <a
               href="https://cleve.ai"
@@ -97,8 +97,8 @@ const HeroSection = () => {
         </div>
         <div className="flex flex-col gap-4">
           <img
-            src="/ashvin-profile.png"
-            alt="Ashvin Praveen"
+            src="/lizzie-profile.png"
+            alt="Lizzie Tan"
             className="w-32 h-32 md:w-full md:h-auto md:aspect-square rounded-lg object-cover object-top shrink-0 ring-1 ring-border"
           />
         </div>

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
 export const SITE_URL = "https://ashvinpraveen.com";
-export const SITE_NAME = "Ashvin Praveen";
+export const SITE_NAME = "Lizzie Tan";
 export const DEFAULT_OG_IMAGE = "/og-image.png";
 
-export const homeTitle = "Ashvin Praveen — Co-founder & CEO of Cleve.ai";
+export const homeTitle = "Lizzie Tan — CMO & Co-founder of Cleve.ai";
 export const homeDescription =
-  "Ashvin Praveen builds AI tools for writing, thinking, and communities in Malaysia. Co-founder & CEO of Cleve.ai.";
+  "Lizzie Tan builds AI tools for writing, thinking, and communities. CMO & Co-founder of Cleve.ai.";
 
 export function absoluteUrl(path = "/") {
   return new URL(path, SITE_URL).toString();
@@ -57,7 +57,7 @@ export function createMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      creator: "@ashvinpk",
+      creator: "@lizzietan",
       title,
       description,
       images: [
@@ -77,7 +77,7 @@ export function excerpt(content: string | null | undefined) {
     .replace(/\s+/g, " ")
     .trim();
 
-  if (!text) return "Writing by Ashvin Praveen on AI, startups, building, and learning in public.";
+  if (!text) return "Writing by Lizzie Tan on AI, startups, building, and learning in public.";
   if (text.length <= 155) return text;
 
   return `${text.slice(0, 152).trim()}...`;

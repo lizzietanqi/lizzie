@@ -5,10 +5,10 @@ const homeJsonLd = [
   {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Ashvin Praveen",
+    name: "Lizzie Tan",
     url: "https://ashvinpraveen.com/",
     image: "https://ashvinpraveen.com/ashvin-profile.png",
-    jobTitle: "Co-founder & CEO",
+    jobTitle: "CMO & Co-founder",
     worksFor: {
       "@type": "Organization",
       name: "Cleve.ai",
@@ -21,18 +21,18 @@ const homeJsonLd = [
       "https://x.com/ashvinpk",
       "https://youtube.com/@ashvinpraveen",
       "https://threads.net/@ashvinpraveen",
-      "https://github.com/ashvinpraveen",
+      "https://github.com/lizzietanqi",
     ],
   },
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Ashvin Praveen",
+    name: "Lizzie Tan",
     url: "https://ashvinpraveen.com/",
     description: homeDescription,
     publisher: {
       "@type": "Person",
-      name: "Ashvin Praveen",
+      name: "Lizzie Tan",
     },
   },
 ];

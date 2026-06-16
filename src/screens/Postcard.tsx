@@ -484,7 +484,7 @@ const Postcard = () => {
                       {postcard.reply && (
                         <div className="mt-5 rounded-[8px] border border-border bg-background/70 p-4 dark:bg-muted/70">
                           <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-primary">
-                            Ashvin replied
+                            Lizzie replied
                           </p>
                           <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
                             {postcard.reply}
