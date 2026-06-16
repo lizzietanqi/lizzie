@@ -13,6 +13,7 @@ import { contentColumnClassName, pageShellClassName } from "@/lib/layout";
 import { cn } from "@/lib/utils";
 
 const MAX_MESSAGE_LENGTH = 500;
+const MESSAGE_COUNTER_THRESHOLD = 420;
 const CLIENT_ID_KEY = "postcard-client-id";
 const drawingPlacements = [
   { left: "8%", top: "18%", width: "28%", rotate: "-4deg" },
@@ -202,14 +203,14 @@ const DrawingPad = ({
       </div>
       <div
         className={cn(
-          "rounded-[12px] border border-border bg-background p-3 dark:bg-muted",
+          "overflow-hidden rounded-[12px] border border-border bg-background dark:bg-muted",
           hasDrawing && "border-primary/70",
         )}
       >
         <canvas
           ref={canvasRef}
           id="postcard-drawing"
-          className="h-64 w-full touch-none dark:invert"
+          className="block h-64 w-full touch-none dark:invert"
           onPointerDown={startDrawing}
           onPointerMove={draw}
           onPointerUp={stopDrawing}
@@ -432,9 +433,13 @@ const Postcard = () => {
                     </div>
 
                     <div className="flex flex-wrap items-center justify-between gap-3 border-t border-dashed border-border pt-4">
-                      <p className="font-mono text-[10px] text-muted-foreground">
-                        {message.length}/{MAX_MESSAGE_LENGTH}
-                      </p>
+                      {message.length >= MESSAGE_COUNTER_THRESHOLD ? (
+                        <p className="font-mono text-[10px] text-muted-foreground">
+                          {message.length}/{MAX_MESSAGE_LENGTH}
+                        </p>
+                      ) : (
+                        <span aria-hidden="true" />
+                      )}
                       <Button type="submit" disabled={isSubmitting} className="rounded-[8px] font-mono text-xs">
                         {isSubmitting ? "Sharing..." : "Share →"}
                       </Button>
@@ -463,71 +468,86 @@ const Postcard = () => {
               )}
 
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {postcards?.map((postcard) => (
-                  <article
-                    key={postcard._id}
-                    className="flex min-h-64 flex-col justify-between rounded-[12px] border border-border bg-card p-4"
-                  >
-                    <div className="space-y-4">
-                      {postcard.drawingDataUrl && (
-                        <div className="h-36 w-full rounded-[12px] border border-border bg-background p-2 dark:bg-muted">
-                          <img
-                            src={postcard.drawingDataUrl}
-                            alt=""
-                            className="h-full w-full object-contain dark:invert"
-                            loading="lazy"
-                          />
+                {postcards?.map((postcard) => {
+                  const senderName = postcard.name.trim();
+                  const senderLocation = postcard.location.trim();
+                  const hasSender = senderName || senderLocation;
+
+                  return (
+                    <article
+                      key={postcard._id}
+                      className="flex min-h-64 flex-col justify-between rounded-[12px] border border-border bg-card p-4"
+                    >
+                      <div className="space-y-4">
+                        {postcard.drawingDataUrl && (
+                          <div className="h-36 w-full rounded-[12px] border border-border bg-background p-2 dark:bg-muted">
+                            <img
+                              src={postcard.drawingDataUrl}
+                              alt=""
+                              className="h-full w-full object-contain dark:invert"
+                              loading="lazy"
+                            />
+                          </div>
+                        )}
+                        <p className="whitespace-pre-wrap text-base leading-relaxed text-foreground/95">
+                          {postcard.message}
+                        </p>
+                      </div>
+                      {postcard.reply && (
+                        <div className="mt-5 rounded-[8px] border border-border bg-background/70 p-4 dark:bg-muted/70">
+                          <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-primary">
+                            Ashvin replied
+                          </p>
+                          <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+                            {postcard.reply}
+                          </p>
                         </div>
                       )}
-                      <p className="whitespace-pre-wrap text-base leading-relaxed text-foreground/95">
-                        {postcard.message}
-                      </p>
-                    </div>
-                    {postcard.reply && (
-                      <div className="mt-5 rounded-[8px] border border-border bg-background/70 p-4 dark:bg-muted/70">
-                        <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-primary">
-                          Ashvin replied
-                        </p>
-                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
-                          {postcard.reply}
-                        </p>
-                      </div>
-                    )}
-                    <footer className="mt-6 flex items-end justify-between gap-4 border-t border-dashed border-border pt-4">
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
-                          {postcard.name || "Anonymous"}
-                        </p>
-                        {postcard.location && (
-                          <p className="font-mono text-[10px] text-muted-foreground">
-                            {postcard.location}
-                          </p>
+                      <footer
+                        className={cn(
+                          "mt-6 flex items-end gap-4 border-t border-dashed border-border pt-4",
+                          hasSender ? "justify-between" : "justify-end",
                         )}
-                      </div>
-                      <time className="font-mono text-[10px] text-muted-foreground">
-                        {formatPostcardDate(postcard.createdAt)}
-                      </time>
-                    </footer>
-                    <button
-                      type="button"
-                      onClick={() => handleLike(postcard._id)}
-                      disabled={likingPostcardId === postcard._id}
-                      aria-pressed={postcard.isLiked}
-                      className={cn(
-                        "mt-5 flex w-fit items-center gap-2 rounded-full border border-border px-3 py-1.5 font-mono text-[10px] transition-colors",
-                        postcard.isLiked
-                          ? "border-primary/70 bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:border-primary/50 hover:text-foreground",
-                      )}
-                    >
-                      <Heart
-                        className={cn("h-3.5 w-3.5", postcard.isLiked && "fill-current")}
-                        aria-hidden="true"
-                      />
-                      <span>{postcard.likeCount ?? 0}</span>
-                    </button>
-                  </article>
-                ))}
+                      >
+                        {hasSender && (
+                          <div className="space-y-0.5">
+                            {senderName && (
+                              <p className="font-mono text-[10px] text-muted-foreground">
+                                {senderName}
+                              </p>
+                            )}
+                            {senderLocation && (
+                              <p className="font-mono text-[10px] text-muted-foreground/80">
+                                {senderLocation}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        <time className="font-mono text-[10px] text-muted-foreground">
+                          {formatPostcardDate(postcard.createdAt)}
+                        </time>
+                      </footer>
+                      <button
+                        type="button"
+                        onClick={() => handleLike(postcard._id)}
+                        disabled={likingPostcardId === postcard._id}
+                        aria-pressed={postcard.isLiked}
+                        className={cn(
+                          "mt-5 flex w-fit items-center gap-2 rounded-full border border-border px-3 py-1.5 font-mono text-[10px] transition-colors",
+                          postcard.isLiked
+                            ? "border-primary/70 bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:border-primary/50 hover:text-foreground",
+                        )}
+                      >
+                        <Heart
+                          className={cn("h-3.5 w-3.5", postcard.isLiked && "fill-current")}
+                          aria-hidden="true"
+                        />
+                        <span>{postcard.likeCount ?? 0}</span>
+                      </button>
+                    </article>
+                  );
+                })}
               </div>
             </section>
           </section>
