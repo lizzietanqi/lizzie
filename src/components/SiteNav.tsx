@@ -11,7 +11,7 @@ const SiteNav = () => {
         </Link>
         <div className="flex items-center gap-5 font-mono text-xs">
           <Link to="/postcard" className="text-muted-foreground hover:text-foreground transition-colors">
-            Postcard
+            Postcards
           </Link>
           <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
             Writing

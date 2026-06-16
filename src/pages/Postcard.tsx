@@ -238,7 +238,7 @@ const DrawingField = ({
   return (
     <section className="space-y-5 border-t border-border pt-12">
       <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-        Drawing field
+        Drawings
       </h2>
 
       <div className="relative min-h-[22rem] overflow-hidden rounded-[12px] border border-border bg-card">
@@ -371,7 +371,7 @@ const Postcard = () => {
                 Drop a thought
               </h1>
               <p className="text-base leading-relaxed text-muted-foreground">
-                What's something you learned today? Or something random you're thinking about? Share a thought, a story, or a tiny drawing. I read and reply to everything.
+                What's something you learned today? Or something random you're thinking about? Or a question? Share a thought, a story, an article, a YouTube video, or a tiny drawing. I read and reply to everything.
               </p>
             </div>
 
@@ -449,16 +449,16 @@ const Postcard = () => {
             <section className="space-y-6 border-t border-border pt-12">
               <div className="max-w-2xl space-y-2">
                 <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                  Wall
+                  Feed
                 </h2>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Thoughts, lessons, stories, and little sketches from people passing through. Heart the ones you like; the wall floats them higher.
+                  Share your thoughts too, and like the interesting ones.
                 </p>
               </div>
 
               {postcards && postcards.length === 0 && (
                 <div className="rounded-[12px] border border-dashed border-border p-8 text-sm text-muted-foreground">
-                  The wall is quiet. Be first.
+                  The feed is quiet. Be first.
                 </div>
               )}
 
