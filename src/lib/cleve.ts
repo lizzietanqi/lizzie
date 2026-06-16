@@ -1,5 +1,3 @@
-const PROXY_BASE = `${import.meta.env.VITE_CONVEX_SITE_URL}/cleve-proxy`;
-
 export interface CleveNote {
   id: string;
   title: string;
@@ -8,12 +6,18 @@ export interface CleveNote {
   updatedAt?: number | null;
 }
 
-function cleveProxyUrl(params: Record<string, string>) {
-  if (!import.meta.env.VITE_CONVEX_SITE_URL) {
-    throw new Error("VITE_CONVEX_SITE_URL is not configured");
+function getConvexSiteUrl() {
+  const siteUrl = process.env.NEXT_PUBLIC_CONVEX_SITE_URL;
+
+  if (!siteUrl) {
+    throw new Error("NEXT_PUBLIC_CONVEX_SITE_URL is not configured");
   }
 
-  const url = new URL(PROXY_BASE);
+  return siteUrl;
+}
+
+function cleveProxyUrl(params: Record<string, string>) {
+  const url = new URL(`${getConvexSiteUrl()}/cleve-proxy`);
   Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
   return url.toString();
 }

@@ -1,6 +1,6 @@
 # Convex and Cleve Public Notes Setup
 
-Last updated: 2026-06-06
+Last updated: 2026-06-16
 
 ## Current Convex Dev Deployment
 
@@ -9,9 +9,9 @@ This repo is configured to use a dedicated Convex dev project for the personal w
 Local `.env.local` contains:
 
 ```bash
-CONVEX_DEPLOYMENT=dev:acrobatic-perch-899 # team: ashvin-praveen, project: ashvinpersonalwebsite
-VITE_CONVEX_URL=https://acrobatic-perch-899.eu-west-1.convex.cloud
-VITE_CONVEX_SITE_URL=https://acrobatic-perch-899.eu-west-1.convex.site
+CONVEX_DEPLOYMENT=dev:your-deployment # team: your-team, project: ashvinpersonalwebsite
+NEXT_PUBLIC_CONVEX_URL=https://your-deployment.convex.cloud
+NEXT_PUBLIC_CONVEX_SITE_URL=https://your-deployment.convex.site
 ```
 
 `.env.local` is gitignored. Do not commit it.

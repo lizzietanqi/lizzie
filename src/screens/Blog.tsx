@@ -1,10 +1,11 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import SiteNav from "@/components/SiteNav";
 import Footer from "@/components/Footer";
 import ActivityMap from "@/components/ActivityMap";
-import Seo from "@/components/Seo";
-import { fetchNotes } from "@/lib/cleve";
+import { CleveNote, fetchNotes } from "@/lib/cleve";
 import { contentColumnClassName, pageShellClassName } from "@/lib/layout";
 
 const formatNoteDate = (timestamp: number | null | undefined) => {
@@ -24,39 +25,19 @@ const PostSkeleton = () => (
   </li>
 );
 
-const Blog = () => {
+type BlogProps = {
+  initialNotes?: CleveNote[];
+};
+
+const Blog = ({ initialNotes }: BlogProps) => {
   const { data: notes, isLoading, isError, refetch } = useQuery({
     queryKey: ["cleve-notes"],
     queryFn: fetchNotes,
+    initialData: initialNotes,
   });
 
   return (
     <>
-      <Seo
-        title="Writing — Ashvin Praveen"
-        description="Essays, notes, and build-in-public updates from Ashvin Praveen on AI, writing, startups, and community."
-        path="/blog"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Blog",
-          name: "Writing — Ashvin Praveen",
-          url: "https://ashvinpraveen.com/blog",
-          description:
-            "Essays, notes, and build-in-public updates from Ashvin Praveen on AI, writing, startups, and community.",
-          author: {
-            "@type": "Person",
-            name: "Ashvin Praveen",
-            url: "https://ashvinpraveen.com/",
-          },
-          blogPost: notes?.slice(0, 10).map((note) => ({
-            "@type": "BlogPosting",
-            headline: note.title || "Untitled",
-            url: `https://ashvinpraveen.com/blog/${note.id}`,
-            datePublished: note.createdAt ? new Date(note.createdAt).toISOString() : undefined,
-            dateModified: note.updatedAt ? new Date(note.updatedAt).toISOString() : undefined,
-          })),
-        }}
-      />
       <SiteNav />
       <main className={`${pageShellClassName} pb-20 pt-24`}>
         <div className={contentColumnClassName}>
@@ -99,7 +80,7 @@ const Blog = () => {
               {notes.map((note) => (
                 <li key={note.id}>
                   <Link
-                    to={`/blog/${note.id}`}
+                    href={`/blog/${note.id}`}
                     className="group block space-y-1"
                   >
                     <h2 className="text-base font-medium text-foreground group-hover:text-primary transition-colors">

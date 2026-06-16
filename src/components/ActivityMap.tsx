@@ -1,5 +1,7 @@
+"use client";
+
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { CleveNote, fetchNote } from "@/lib/cleve";
 import LazyRichMarkdown from "@/components/LazyRichMarkdown";
@@ -396,7 +398,7 @@ const ActivityMap = ({ notes }: ActivityMapProps) => {
 
           {panelNote && (
             <Link
-              to={`/blog/${panelNote.id}`}
+              href={`/blog/${panelNote.id}`}
               className="border-t border-border px-6 py-4 font-mono text-sm text-primary hover:underline underline-offset-4"
             >
               Open full post →

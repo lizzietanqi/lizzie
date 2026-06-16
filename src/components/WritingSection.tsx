@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/cleve";
 import SectionBlock from "@/components/SectionBlock";
@@ -46,7 +46,7 @@ const WritingSection = () => {
           {isError && (
             <p className="font-mono text-xs text-muted-foreground pl-4">
               Couldn't load posts.{" "}
-              <Link to="/blog" className="text-primary hover:underline underline-offset-4">
+              <Link href="/blog" className="text-primary hover:underline underline-offset-4">
                 Browse all →
               </Link>
             </p>
@@ -54,7 +54,7 @@ const WritingSection = () => {
           {!isLoading && !isError && posts.map((post) => (
             <Link
               key={post.id}
-              to={`/blog/${post.id}`}
+              href={`/blog/${post.id}`}
               className="group flex items-start justify-between gap-4 border-b border-border p-4 transition-colors last:border-b-0 hover:bg-muted/35"
             >
               <div>
@@ -74,7 +74,7 @@ const WritingSection = () => {
 
         <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-sm pl-4">
           <Link
-            to="/blog"
+            href="/blog"
             className="text-primary hover:underline underline-offset-4 transition-colors"
           >
             All posts →

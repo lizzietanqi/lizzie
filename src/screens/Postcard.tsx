@@ -1,3 +1,5 @@
+"use client";
+
 import { FormEvent, PointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { Heart, Undo2 } from "lucide-react";
@@ -5,7 +7,6 @@ import { toast } from "sonner";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import Footer from "@/components/Footer";
-import Seo from "@/components/Seo";
 import SiteNav from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -350,19 +351,6 @@ const Postcard = () => {
 
   return (
     <>
-      <Seo
-        title="Postcards — Ashvin Praveen"
-        description="Leave a public postcard for Ashvin Praveen. Write a note, draw something small, and see it appear on the site."
-        path="/postcard"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "WebPage",
-          name: "Postcards — Ashvin Praveen",
-          url: "https://ashvinpraveen.com/postcard",
-          description:
-            "Leave a public postcard for Ashvin Praveen. Write a note, draw something small, and see it appear on the site.",
-        }}
-      />
       <SiteNav />
       <main className={`${pageShellClassName} pb-28 pt-24`}>
         <div className={contentColumnClassName}>

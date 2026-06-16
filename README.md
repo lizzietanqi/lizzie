@@ -2,7 +2,7 @@
 
 A minimal personal website for builders who want their writing, projects, and story in one place.
 
-This site is built with React, Vite, Tailwind, shadcn/ui, Convex, and [Cleve](https://cleve.ai). The interesting part is the writing system: blog posts are not stored in this repo. They are published from a public Cleve profile and pulled into the website automatically through a small Convex HTTP proxy.
+This site is built with Next.js, React, Tailwind, shadcn/ui, Convex, and [Cleve](https://cleve.ai). The interesting part is the writing system: blog posts are not stored in this repo. They are published from a public Cleve profile and pulled into the website automatically through a small Convex HTTP proxy.
 
 That means you can use this as a personal website template where:
 
@@ -28,9 +28,9 @@ The site includes:
 
 | Layer | Tool |
 | --- | --- |
-| App | React 18 + Vite |
+| App | Next.js + React |
 | Styling | Tailwind CSS + shadcn/ui |
-| Routing | React Router |
+| Routing | Next App Router |
 | Data fetching | TanStack Query |
 | Backend proxy | Convex HTTP actions |
 | Writing source | Cleve public profile |
@@ -59,15 +59,15 @@ The frontend will load, but the Writing section needs Convex environment variabl
 Create `.env.local` in the project root:
 
 ```bash
-VITE_CONVEX_URL=your_convex_cloud_url
-VITE_CONVEX_SITE_URL=your_convex_site_url
+NEXT_PUBLIC_CONVEX_URL=your_convex_cloud_url
+NEXT_PUBLIC_CONVEX_SITE_URL=your_convex_site_url
 ```
 
 Do not commit `.env.local`.
 
-`VITE_CONVEX_URL` is the normal Convex deployment URL.
+`NEXT_PUBLIC_CONVEX_URL` is the normal Convex deployment URL.
 
-`VITE_CONVEX_SITE_URL` is the Convex HTTP Actions URL. It usually looks like:
+`NEXT_PUBLIC_CONVEX_SITE_URL` is the Convex HTTP Actions URL. It usually looks like:
 
 ```text
 https://your-deployment.convex.site
@@ -76,8 +76,8 @@ https://your-deployment.convex.site
 The frontend calls:
 
 ```text
-${VITE_CONVEX_SITE_URL}/cleve-proxy?resource=notes
-${VITE_CONVEX_SITE_URL}/cleve-proxy?resource=note&id=<note_id>
+${NEXT_PUBLIC_CONVEX_SITE_URL}/cleve-proxy?resource=notes
+${NEXT_PUBLIC_CONVEX_SITE_URL}/cleve-proxy?resource=note&id=<note_id>
 ```
 
 The postcard admin page at `/admin/postcards` also needs a server-side Convex
@@ -300,26 +300,25 @@ npx convex deploy
 Copy your Convex URLs into your production environment variables:
 
 ```bash
-VITE_CONVEX_URL=your_convex_cloud_url
-VITE_CONVEX_SITE_URL=your_convex_site_url
+NEXT_PUBLIC_CONVEX_URL=your_convex_cloud_url
+NEXT_PUBLIC_CONVEX_SITE_URL=your_convex_site_url
 ```
 
 ### Deploy Vercel
 
 Import the GitHub repo into [Vercel](https://vercel.com).
 
-Use the default Vite settings:
+Use the default Next.js settings:
 
 ```text
 Build command: npm run build
-Output directory: dist
 ```
 
 Add these Vercel environment variables:
 
 ```bash
-VITE_CONVEX_URL=your_convex_cloud_url
-VITE_CONVEX_SITE_URL=your_convex_site_url
+NEXT_PUBLIC_CONVEX_URL=your_convex_cloud_url
+NEXT_PUBLIC_CONVEX_SITE_URL=your_convex_site_url
 ```
 
 Deploy.
@@ -336,7 +335,7 @@ Deploy.
 
 ### Blog Index
 
-`src/pages/Blog.tsx` fetches the same public notes and renders all posts at:
+`app/blog/page.tsx` server-renders metadata for the writing index. `src/screens/Blog.tsx` hydrates the interactive writing UI at:
 
 ```text
 /blog
@@ -344,7 +343,7 @@ Deploy.
 
 ### Blog Post
 
-`src/pages/BlogPost.tsx` fetches one note by ID and renders it at:
+`app/blog/[id]/page.tsx` server-renders each post's title, description, canonical URL, Open Graph tags, and JSON-LD. `src/screens/BlogPost.tsx` hydrates the post UI at:
 
 ```text
 /blog/:id
@@ -361,7 +360,7 @@ Hovering a filled cell previews the post. Clicking opens the post in a side pane
 ## Commands
 
 ```bash
-npm run dev        # start local Vite dev server
+npm run dev        # start local Next dev server on port 8080
 npm run build      # production build
 npm run lint       # lint project
 npm run test       # run tests
@@ -376,8 +375,8 @@ npx convex deploy  # deploy Convex functions
 Check that `.env.local` includes:
 
 ```bash
-VITE_CONVEX_URL=...
-VITE_CONVEX_SITE_URL=...
+NEXT_PUBLIC_CONVEX_URL=...
+NEXT_PUBLIC_CONVEX_SITE_URL=...
 ```
 
 Then check your Convex HTTP action:
@@ -425,8 +424,8 @@ npx convex deploy
 Make sure Vercel has:
 
 ```bash
-VITE_CONVEX_URL
-VITE_CONVEX_SITE_URL
+NEXT_PUBLIC_CONVEX_URL
+NEXT_PUBLIC_CONVEX_SITE_URL
 ```
 
 And make sure Convex has:
@@ -441,6 +440,12 @@ CLEVE_PUBLIC_PROFILE_SLUG
 convex/
   http.ts                    # Cleve public notes proxy
 
+app/
+  blog/
+    [id]/page.tsx            # server-rendered blog post route + metadata
+    page.tsx                 # server-rendered writing index
+  sitemap.ts                 # dynamic sitemap with Cleve posts
+
 src/
   components/
     ActivityMap.tsx           # writing heatmap + post side panel
@@ -451,7 +456,8 @@ src/
   lib/
     cleve.ts                  # frontend client for /cleve-proxy
     layout.ts                 # shared width/layout classes
-  pages/
+    seo.ts                    # Next metadata helpers
+  screens/
     Blog.tsx
     BlogPost.tsx
     Index.tsx

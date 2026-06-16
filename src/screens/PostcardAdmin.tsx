@@ -1,10 +1,11 @@
+"use client";
+
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import Footer from "@/components/Footer";
-import Seo from "@/components/Seo";
 import SiteNav from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,12 +82,6 @@ const PostcardAdmin = () => {
 
   return (
     <>
-      <Seo
-        title="Postcard admin — Ashvin Praveen"
-        description="Private postcard reply admin."
-        path="/admin/postcards"
-        noIndex
-      />
       <SiteNav />
       <main className={`${pageShellClassName} pb-28 pt-24`}>
         <div className={contentColumnClassName}>

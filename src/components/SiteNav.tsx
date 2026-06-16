@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 import { pageShellClassName } from "@/lib/layout";
 
@@ -6,14 +6,14 @@ const SiteNav = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
       <div className={`${pageShellClassName} flex items-center justify-between h-12`}>
-        <Link to="/" className="font-mono text-base font-bold tracking-widest text-foreground hover:text-primary transition-colors">
+        <Link href="/" className="font-mono text-base font-bold tracking-widest text-foreground hover:text-primary transition-colors">
           AP
         </Link>
         <div className="flex items-center gap-5 font-mono text-xs">
-          <Link to="/postcard" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/postcard" className="text-muted-foreground hover:text-foreground transition-colors">
             Postcards
           </Link>
-          <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
             Writing
           </Link>
           <ThemeToggle />
