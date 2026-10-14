@@ -37,7 +37,7 @@ type RichTextNode = {
 };
 
 const CLEVE_CONVEX_URL = "https://earnest-chicken-856.convex.cloud";
-const CLEVE_PUBLIC_PROFILE_SLUG = env.CLEVE_PUBLIC_PROFILE_SLUG ?? "ashvinpraveen";
+const CLEVE_PUBLIC_PROFILE_SLUG = env.CLEVE_PUBLIC_PROFILE_SLUG ?? "lizzietan";
 
 const jsonResponse = (body: unknown, init?: ResponseInit) => {
   const headers = new Headers(init?.headers);

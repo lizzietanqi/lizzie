@@ -24,15 +24,7 @@ const ContactSection = () => {
             lizzie@cleve.ai
           </a>
           <a
-            href="https://cal.com/ashvinpraveen"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline underline-offset-4 transition-colors"
-          >
-            Book a call
-          </a>
-          <a
-            href="https://linkedin.com/in/ashvinpraveen"
+            href="https://linkedin.com/in/lizzietan"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline underline-offset-4 transition-colors"

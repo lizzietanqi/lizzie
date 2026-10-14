@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export const SITE_URL = "https://ashvinpraveen.com";
+export const SITE_URL = "https://lizzietan.com";
 export const SITE_NAME = "Lizzie Tan";
 export const DEFAULT_OG_IMAGE = "/og-image.png";
 

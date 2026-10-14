@@ -1,37 +1,31 @@
 const socials = [
   {
     label: "LinkedIn",
-    href: "https://linkedin.com/in/ashvinpraveen",
+    href: "https://linkedin.com/in/lizzietan",
     icon: "/social-icons/LinkedIn_logo.svg",
     iconDark: null,
   },
   {
     label: "Instagram",
-    href: "https://instagram.com/ashvinpraveen",
+    href: "https://instagram.com/lizzietanqi",
     icon: "/social-icons/Instagram_logo.svg",
     iconDark: null,
   },
   {
     label: "TikTok",
-    href: "https://tiktok.com/@ashvinpraveen",
+    href: "https://tiktok.com/@lizzietanqi",
     icon: "/social-icons/TikTok_logo.svg",
     iconDark: null,
   },
   {
     label: "X",
-    href: "https://x.com/ashvinpk",
+    href: "https://x.com/lizzietanqi",
     icon: "/social-icons/X_Twitter_logo.svg",
     iconDark: null,
   },
   {
-    label: "YouTube",
-    href: "https://youtube.com/@ashvinpraveen",
-    icon: "/social-icons/YouTube_logo.svg",
-    iconDark: null,
-  },
-  {
     label: "Threads",
-    href: "https://threads.net/@ashvinpraveen",
+    href: "https://threads.net/@lizzietanqi",
     icon: "/social-icons/Threads_logo_black.svg",
     iconDark: "/social-icons/Threads_logo_white.svg",
   },

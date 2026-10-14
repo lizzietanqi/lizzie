@@ -1,4 +1,4 @@
-# Ashvin's Personal Website
+# Lizzie Tan's Personal Website
 
 A minimal personal website for builders who want their writing, projects, and story in one place.
 
@@ -40,8 +40,8 @@ The site includes:
 ## Quickstart
 
 ```bash
-git clone https://github.com/ashvinpraveen/ashvinpersonalwebsite.git
-cd ashvinpersonalwebsite
+git clone https://github.com/lizzietanqi/lizzie.git
+cd lizzie
 npm install
 npm run dev
 ```
@@ -111,10 +111,10 @@ GET /cleve-proxy?resource=notes
 GET /cleve-proxy?resource=note&id=<note_id>
 ```
 
-By default, the proxy reads from Ashvin's public Cleve profile:
+By default, the proxy reads from Lizzie's public Cleve profile:
 
 ```text
-https://app.cleve.ai/user/ashvinpraveen
+https://app.cleve.ai/user/lizzietan
 ```
 
 To use your own Cleve profile, set this Convex environment variable:
@@ -180,7 +180,7 @@ Click **Use this template** or fork the repo on GitHub.
 Or clone manually:
 
 ```bash
-git clone https://github.com/ashvinpraveen/ashvinpersonalwebsite.git my-personal-site
+git clone https://github.com/lizzietanqi/lizzie.git my-personal-site
 cd my-personal-site
 npm install
 ```
@@ -387,7 +387,7 @@ https://your-deployment.convex.site/cleve-proxy?resource=notes
 
 It should return JSON with a `data` array.
 
-### It still shows Ashvin's posts
+### It still shows Lizzie's posts
 
 Set your own Cleve profile slug in Convex:
 
@@ -477,6 +477,6 @@ Write in Cleve. Publish when ready. Your website becomes a public record of what
 
 ## Credits
 
-Built by [Ashvin Praveen](https://ashvinpraveen.com), co-founder and CEO of [Cleve](https://cleve.ai).
+Lizzie Tan's site, CMO and co-founder of [Cleve](https://cleve.ai). Based on the template by [Ashvin Praveen](https://ashvinpraveen.com).
 
 Use it, remix it, and make it yours.

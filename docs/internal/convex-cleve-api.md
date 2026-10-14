@@ -9,7 +9,7 @@ This repo is configured to use a dedicated Convex dev project for the personal w
 Local `.env.local` contains:
 
 ```bash
-CONVEX_DEPLOYMENT=dev:your-deployment # team: your-team, project: ashvinpersonalwebsite
+CONVEX_DEPLOYMENT=dev:your-deployment # team: your-team, project: lizzie
 NEXT_PUBLIC_CONVEX_URL=https://your-deployment.convex.cloud
 NEXT_PUBLIC_CONVEX_SITE_URL=https://your-deployment.convex.site
 ```
@@ -21,7 +21,7 @@ NEXT_PUBLIC_CONVEX_SITE_URL=https://your-deployment.convex.site
 The public profile page at:
 
 ```text
-https://app.cleve.ai/user/ashvinpraveen
+https://app.cleve.ai/user/lizzietan
 ```
 
 loads published notes from Cleve's public Convex deployment:
@@ -39,7 +39,7 @@ notes/api/publishing:getPublishedNotes
 with:
 
 ```json
-{ "slug": "ashvinpraveen" }
+{ "slug": "lizzietan" }
 ```
 
 The note detail query is:
@@ -51,7 +51,7 @@ notes/api/publishing:getPublishedNote
 with:
 
 ```json
-{ "slug": "ashvinpraveen", "noteId": "<note_id>" }
+{ "slug": "lizzietan", "noteId": "<note_id>" }
 ```
 
 These are the same public queries used by Cleve's own profile UI, so the personal website no longer needs a private `CLEVE_API_KEY`, a folder ID, or an allowlist to show already-published notes.
@@ -79,7 +79,7 @@ The proxy normalizes Cleve fields into:
 }
 ```
 
-By default it uses the `ashvinpraveen` public profile. To point a fork at another Cleve profile, set this Convex env var:
+By default it uses the `lizzietan` public profile. To point a fork at another Cleve profile, set this Convex env var:
 
 ```bash
 CLEVE_PUBLIC_PROFILE_SLUG=your_cleve_username
