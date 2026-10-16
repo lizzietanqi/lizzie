@@ -39,26 +39,29 @@ const socials = [
 
 const HeroSection = () => {
   return (
-    <section id="hero" className="pt-16 pb-16 md:pt-24 md:pb-24">
+    <section id="hero" className="pb-16 pt-16 md:pb-24 md:pt-24">
       <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_16rem] md:items-start">
         <div className="max-w-prose">
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-[1.05] mb-4">
+          <p className="mb-4 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">
+            Kuala Lumpur
+          </p>
+          <h1 className="mb-4 text-5xl font-semibold tracking-tight leading-[1.02] md:text-6xl">
             Lizzie Tan
           </h1>
-          <p className="font-mono text-sm mb-6 flex items-center gap-2">
-            <span className="text-primary font-semibold">CMO & Co-founder</span>
+          <p className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-sm">
+            <span className="font-medium text-primary">CMO & co-founder</span>
             <span className="text-muted-foreground">·</span>
             <a
               href="https://cleve.ai"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-muted-foreground transition-colors hover:text-primary"
             >
               Cleve.ai
             </a>
           </p>
-          <p className="text-lg md:text-xl text-foreground/90 leading-relaxed">
-            Experimenting with AI's applications, building and sharing what I've found helpful.
+          <p className="text-lg leading-relaxed text-foreground/90 md:text-xl">
+            I help teams keep what they know, and say it in a voice that still sounds like them.
           </p>
           <div className="mt-8 flex flex-wrap gap-2.5">
             {socials.map((social) => (
@@ -67,22 +70,22 @@ const HeroSection = () => {
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-2 px-3.5 py-2 rounded-lg border border-border bg-muted/40 hover:border-primary/40 hover:bg-muted/60 transition-all"
+                className="group flex items-center gap-2 rounded-lg border border-border bg-card px-3.5 py-2 transition-colors hover:border-primary/40 hover:bg-accent"
               >
                 <img
                   src={social.icon}
                   alt={`${social.label} profile`}
-                  className={`w-4 h-4 object-contain${social.iconDark ? " dark:hidden" : ""}`}
+                  className={`h-4 w-4 object-contain${social.iconDark ? " dark:hidden" : ""}`}
                 />
                 {social.iconDark && (
                   <img
                     src={social.iconDark}
                     alt=""
                     aria-hidden="true"
-                    className="w-4 h-4 object-contain hidden dark:block"
+                    className="hidden h-4 w-4 object-contain dark:block"
                   />
                 )}
-                <span className="text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors">
+                <span className="text-sm font-medium text-foreground/80 transition-colors group-hover:text-foreground">
                   {social.label}
                 </span>
               </a>
@@ -93,7 +96,7 @@ const HeroSection = () => {
           <img
             src="/lizzie-profile.png"
             alt="Lizzie Tan"
-            className="w-32 h-32 md:w-full md:h-auto md:aspect-square rounded-lg object-cover object-top shrink-0 ring-1 ring-border"
+            className="h-32 w-32 shrink-0 rounded-2xl object-cover object-top ring-1 ring-border md:aspect-square md:h-auto md:w-full"
           />
         </div>
       </div>

@@ -4,9 +4,11 @@ This is the short LLM-readable companion file for https://lizzietan.com.
 
 Canonical site: https://lizzietan.com/
 Writing archive: https://lizzietan.com/blog
+Postcards: https://lizzietan.com/postcard
+Game: https://lizzietan.com/game
 Source code: https://github.com/lizzietanqi/lizzie
 OpenGraph image: https://lizzietan.com/og-image.png
 
-Lizzie Tan is the CMO and co-founder of Cleve.ai. Her site covers Cleve, marketing, startups, building in public, and personal notes.
+Lizzie Tan is CMO and co-founder of Cleve.ai, an AI workspace and knowledge base for teams, based in Kuala Lumpur and backed by Antler Malaysia. Ashvin Praveen is CEO. Muhammad Fathy Rashad is CTO. She studied psychology and previously ran the personal branding agency Whacked with Ashvin.
 
 The website is open source. People may copy the code, tweak it, and make it their own.
