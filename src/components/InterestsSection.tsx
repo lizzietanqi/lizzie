@@ -1,23 +1,22 @@
 import SectionBlock from "@/components/SectionBlock";
 
 const interests = [
-  "Music",
-  "Running",
-  "Design",
-  "Building in public",
+  "Epic fantasy",
+  "Psychology",
+  "German",
+  "Personal brands",
   "Writing",
-  "Badminton",
-  "Squash",
+  "Kuala Lumpur",
 ];
 
 const InterestsSection = () => {
   return (
-    <SectionBlock id="interests" label="Interests">
+    <SectionBlock id="off-hours" label="Off hours">
       <div className="flex flex-wrap gap-2">
-        {interests.map((item, i) => (
+        {interests.map((item) => (
           <span
-            key={i}
-            className="px-4 py-2 rounded-full border border-border bg-muted/60 text-sm font-medium text-foreground/80 hover:border-primary/40 hover:bg-muted transition-colors cursor-default"
+            key={item}
+            className="cursor-default rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground/80"
           >
             {item}
           </span>

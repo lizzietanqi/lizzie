@@ -2,37 +2,35 @@ import { useState } from "react";
 import SectionBlock from "@/components/SectionBlock";
 import { proseColumnClassName } from "@/lib/layout";
 
-const inlineLinkClassName = "text-primary hover:underline underline-offset-4 transition-colors";
+const inlineLinkClassName = "text-primary underline-offset-4 transition-colors hover:underline";
 
 const preview = [
+  "I'm Lizzie. I live in Kuala Lumpur.",
   <>
-    I'm Lizzie, based in Kuala Lumpur. I'm the CMO and co-founder of{" "}
-    <a
-      href="https://cleve.ai"
-      target="_blank"
-      rel="noopener noreferrer"
-      className={inlineLinkClassName}
-    >
+    I studied psychology at HELP University on the Merit Award and graduated with First Class Honours. The part I still use is ordinary and stubborn: people trust what they can remember, and they remember the person who was actually listening.
+  </>,
+  <>
+    I co-founded{" "}
+    <a href="https://cleve.ai" target="_blank" rel="noopener noreferrer" className={inlineLinkClassName}>
       Cleve
     </a>
-    , an AI workspace that helps people write with their own context and publish fast.
+    , an AI workspace and knowledge base for teams. Ashvin Praveen is CEO. Muhammad Fathy Rashad is CTO. I am CMO. Antler Malaysia backed us. My job is the story, the product's point of view, and whether any of it sounds like a person.
   </>,
-  "I'm probably the most non-technical founder out there. I can't code to save my life, so my job is everything around the product: the story, the content, and getting it in front of the people it's for.",
-  "When I'm not working, I'm reading. Mostly epic fantasy.",
 ];
 
 const expanded = [
   {
-    title: "Cleve",
+    title: "Whacked",
     paragraphs: [
-      "We started Cleve in December 2023. There are three co-founders: Ashvin as CEO, Rashad as CTO, and me as CMO. Antler backed us early.",
+      "Before Cleve, Ashvin and I ran Whacked, a personal branding agency we started while I was still in university. It began as small freelance gigs and grew into a studio for founders who needed a public voice: the positioning, the posts, the version of them that could travel without them in the room.",
+      "At 23 the agency had done 600K in revenue with a small team. The work I remember most is the stressful kind. Client context lived in one person's head, and when that person left, the brand left with them.",
     ],
   },
   {
-    title: "Before Cleve",
+    title: "Earlier",
     paragraphs: [
-      "I studied at HELP University on the HELP Merit Award Scholarship and graduated with First Class Honours.",
-      "While I was there, I ran the Start-It-Up Interview Series. I interviewed founders across Malaysia's startup scene and shared their stories, hoping more young Malaysians would see starting something as a real option. I also organised networking events that brought university students and startups together.",
+      "I can't code to save my life, so I learned the parts around the product. Copy, Figma, how a room of non-technical people actually hears a demo. At HELP I ran the Start-It-Up interview series and talked to founders across Malaysia's startup scene. I also spent a stretch at Naluri, turning mental-health ideas into daily explainers during the pandemic.",
+      "Away from the docs I read, mostly epic fantasy. I studied German through C1 at the Goethe-Institut. At home I move between English, Chinese, Malay, and Cantonese.",
     ],
   },
 ];
@@ -42,7 +40,7 @@ const AboutSection = () => {
 
   return (
     <SectionBlock id="about" label="About">
-      <div className={`${proseColumnClassName} text-base md:text-[17px] leading-relaxed text-foreground/90`}>
+      <div className={`${proseColumnClassName} text-base leading-relaxed text-foreground/90 md:text-[17px]`}>
         <div className="space-y-4">
           {preview.map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
@@ -53,12 +51,12 @@ const AboutSection = () => {
           <div className="mt-8 space-y-8">
             {expanded.map((section) => (
               <div key={section.title} className="space-y-3">
-                <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
                   {section.title}
                 </h3>
                 <div className="space-y-4">
-                  {section.paragraphs.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
               </div>
@@ -69,7 +67,7 @@ const AboutSection = () => {
         <button
           type="button"
           onClick={() => setIsExpanded((value) => !value)}
-          className="mt-6 font-mono text-sm text-primary hover:underline underline-offset-4 transition-colors"
+          className="mt-6 font-mono text-sm text-primary underline-offset-4 transition-colors hover:underline"
           aria-expanded={isExpanded}
         >
           {isExpanded ? "Show less" : "See more"}

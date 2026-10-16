@@ -4,9 +4,9 @@ export const SITE_URL = "https://lizzietan.com";
 export const SITE_NAME = "Lizzie Tan";
 export const DEFAULT_OG_IMAGE = "/og-image.png";
 
-export const homeTitle = "Lizzie Tan — CMO & Co-founder of Cleve.ai";
+export const homeTitle = "Lizzie Tan — CMO & co-founder of Cleve.ai";
 export const homeDescription =
-  "Lizzie Tan builds AI tools for writing, thinking, and communities. CMO & Co-founder of Cleve.ai.";
+  "Lizzie Tan is CMO and co-founder of Cleve.ai, an AI workspace and knowledge base for teams in Kuala Lumpur. She studied psychology and previously ran the personal branding agency Whacked.";
 
 export function absoluteUrl(path = "/") {
   return new URL(path, SITE_URL).toString();
@@ -57,7 +57,7 @@ export function createMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      creator: "@lizzietan",
+      creator: "@lizzietanqi",
       title,
       description,
       images: [
@@ -77,7 +77,7 @@ export function excerpt(content: string | null | undefined) {
     .replace(/\s+/g, " ")
     .trim();
 
-  if (!text) return "Writing by Lizzie Tan on AI, startups, building, and learning in public.";
+  if (!text) return "Writing by Lizzie Tan on Cleve, thinking, and building in public.";
   if (text.length <= 155) return text;
 
   return `${text.slice(0, 152).trim()}...`;

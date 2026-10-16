@@ -1,11 +1,13 @@
 # Lizzie Tan
 
-> Personal website for Lizzie Tan, CMO and co-founder of Cleve.ai. The site covers her work on Cleve, marketing, startups, and public notes.
+> Personal website for Lizzie Tan, CMO and co-founder of Cleve.ai in Kuala Lumpur. Ashvin Praveen is CEO and Muhammad Fathy Rashad is CTO. The site covers Cleve, Whacked, psychology, and public notes.
 
 ## Canonical URLs
 
 - Home: https://lizzietan.com/
 - Writing: https://lizzietan.com/blog
+- Postcards: https://lizzietan.com/postcard
+- Game: https://lizzietan.com/game
 - Source code: https://github.com/lizzietanqi/lizzie
 - Cleve.ai: https://cleve.ai
 

@@ -22,6 +22,8 @@ The site includes:
 - Activity heatmap for recent writing habits
 - `/blog` writing index
 - `/blog/:id` individual post pages
+- `/postcard` public postcard wall
+- `/game` a one-minute filing game, 23 Tabs
 - A side panel preview when clicking writing activity cells
 
 ## Tech Stack

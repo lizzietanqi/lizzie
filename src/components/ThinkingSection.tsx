@@ -3,32 +3,30 @@ import SectionBlock from "@/components/SectionBlock";
 const ThinkingSection = () => {
   const models = [
     {
-      idea: "Everyone's talking about AI. I want to show people how to use it.",
-      detail: "Practical, applied, from someone building with it daily.",
+      idea: "A full head is not a bad communicator.",
+      detail: "The useful thoughts are usually under the noise. Give them a place before you ask them to be public.",
     },
     {
-      idea: "Speed matters. So does taste.",
-      detail:
-        "The tools are getting faster. The outputs are getting blander. Knowing how to direct AI well is the skill worth building.",
+      idea: "A brand is a memory other people can hold.",
+      detail: "If the context lives in one person's head, the voice leaves when they do.",
     },
     {
-      idea: "Build first, then teach.",
-      detail:
-        "Everything I share comes from building Cleve. The lessons are real.",
+      idea: "Psychology was the job training.",
+      detail: "How people notice, remember, and decide is the whole of marketing, and most of product.",
     },
   ];
 
   return (
-    <SectionBlock label="What I Believe">
+    <SectionBlock label="What I keep coming back to">
       <div className="max-w-prose">
         <div className="space-y-8">
           {models.map((model, i) => (
-            <div key={i} className="flex gap-4">
-              <span className="font-mono text-sm text-muted-foreground mt-0.5 shrink-0">
+            <div key={model.idea} className="flex gap-4">
+              <span className="mt-0.5 shrink-0 font-mono text-sm text-muted-foreground">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div className="border-l border-border pl-4">
-                <p className="text-base font-medium leading-snug text-foreground mb-1.5">
+                <p className="mb-1.5 text-base font-medium leading-snug text-foreground">
                   {model.idea}
                 </p>
                 <p className="text-sm leading-relaxed text-muted-foreground">

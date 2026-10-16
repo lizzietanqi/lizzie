@@ -3,12 +3,10 @@ import SectionBlock from "@/components/SectionBlock";
 type WorkItem = {
   name: string;
   href: string;
-  sourceHref?: string;
   cta: string;
   description: string[];
   logo?: string;
   alt?: string;
-  initials?: string;
 };
 
 const work: WorkItem[] = [
@@ -19,41 +17,35 @@ const work: WorkItem[] = [
     alt: "Cleve",
     cta: "Try it free",
     description: [
-      "AI workspace for writing and thinking. All the major models in one place, with memory that carries across sessions.",
-      "40,000+ users. Backed by Antler.",
+      "An AI workspace for writing and thinking, built as a knowledge base a whole team can use. The models are shared. The memory is yours: notes, docs, tone, and the decisions that usually vanish into chat.",
+      "We started it in Kuala Lumpur after Antler Malaysia. Three co-founders: Ashvin Praveen as CEO, Muhammad Fathy Rashad as CTO, and me on the story and the point of view.",
     ],
   },
 ];
 
 const WorkSection = () => {
   return (
-    <SectionBlock id="work" label="What I'm Building">
+    <SectionBlock id="work" label="Now">
       <div className="space-y-4">
         {work.map((item) => (
           <div
             key={item.href}
-            className="rounded-lg border border-border bg-muted/40 p-5 md:p-6 hover:border-primary/40 hover:bg-muted/60 transition-all"
+            className="rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary/35 md:p-6"
           >
             <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
               <div>
-                <div className="flex items-center gap-3 mb-3">
-                  {item.logo ? (
-                    <img
-                      src={item.logo}
-                      alt={item.alt ?? item.name}
-                      className="w-10 h-10 rounded-lg object-contain shrink-0"
-                    />
-                  ) : (
-                    <span className="flex w-10 h-10 items-center justify-center rounded-lg border border-border bg-background font-mono text-xs font-semibold text-primary shrink-0">
-                      {item.initials}
-                    </span>
-                  )}
+                <div className="mb-3 flex items-center gap-3">
+                  <img
+                    src={item.logo}
+                    alt={item.alt ?? item.name}
+                    className="h-10 w-10 shrink-0 rounded-lg object-contain"
+                  />
                   <h3 className="text-lg font-semibold">
                     <a
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-primary transition-colors"
+                      className="transition-colors hover:text-primary"
                     >
                       {item.name} ↗
                     </a>
@@ -65,26 +57,14 @@ const WorkSection = () => {
                   ))}
                 </div>
               </div>
-              <div className="flex flex-wrap gap-x-4 gap-y-2 md:flex-col md:items-end">
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-sm text-primary hover:underline underline-offset-4 transition-colors"
-                >
-                  {item.cta} →
-                </a>
-                {item.sourceHref && (
-                  <a
-                    href={item.sourceHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-4 transition-colors"
-                  >
-                    Source →
-                  </a>
-                )}
-              </div>
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-sm text-primary underline-offset-4 transition-colors hover:underline"
+              >
+                {item.cta} →
+              </a>
             </div>
           </div>
         ))}
